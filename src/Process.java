@@ -2,7 +2,7 @@
 public class Process {
 	// Declare final variables (constants)
 	private static final int MIN_SIZE = 256; // Lowest possible memory size for a process
-	private static final int MAX_SIZE = 2048; // Highest possible memory size for a process
+	private static final int MAX_SIZE = 1024; // Highest possible memory size for a process
 	private static final int SIZE_STEPPING = 64; // Memory stepping
 	private static final int MIN_TIME = 3; // Lowest possible cpu time
 	private static final int MAX_TIME = 15; // Highest possible cpu time
