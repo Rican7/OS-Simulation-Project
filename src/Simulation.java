@@ -8,11 +8,15 @@ import java.util.Random;
 
 // Simulation main engine class
 public class Simulation {
+	// Declare final variables (constants)
+	private static final int MAX_MEMORY = 2048; // Total available user memory
+	private static final int MAX_EVENTS = 500; // Maximum number of events to be fired before quitting
+
 	// Program wide objects
 	public static Random random;
 
 	// Constructor
-	public Simulation() {
+	private static void run() {
 		// To test the random process generation, let's create a bunch of processes and print them to the screen (log)
 		while (Process.numOfProcesses < 100) {
 			Process job = new Process();
@@ -27,7 +31,7 @@ public class Simulation {
 		random = new Random();
 
 		// Begin the simulation
-		Simulation simulation = new Simulation();
+		run();
 	}
 
 } // End Simulation class

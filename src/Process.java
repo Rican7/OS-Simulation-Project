@@ -17,14 +17,31 @@ public class Process {
 	private int cpuTime;
 
 	// Constructor
-	public Process() {
-		// Set the instances properties
+	public Process(int setSize, int setTime) {
+		// Let's generate a process ID
 		identifier = generateId();
-		size = generateSize();
-		cpuTime = generateTime();
+
+		// If the sent parameters were -1, let's generate some valid properties
+		if (setSize == -1 || setTime == -1) {
+			// Set the instances properties
+			size = generateSize();
+			cpuTime = generateTime();
+		}
+		// Otherwise, let's take the passed values
+		else {
+			// Set the instances properties
+			size = setSize;
+			cpuTime = setTime;
+		}
 
 		// Increment the numOfProcesses
 		numOfProcesses++;
+	}
+
+	// Empty parameter constructor
+	public Process() {
+		// Call the constructor with invalid parameters to have them self-generate
+		this(-1, -1);
 	}
 
 	private int generateId() {
