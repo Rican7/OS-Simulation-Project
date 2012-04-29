@@ -17,6 +17,9 @@ public class Simulation {
 
 	// Constructor
 	private static void run() {
+		EventManager events = new EventManager();
+		System.exit(0);
+
 		// To test the random process generation, let's create a bunch of processes and print them to the screen (log)
 		while (Process.numOfProcesses < 100) {
 			Process job = new Process();
