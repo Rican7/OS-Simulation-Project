@@ -1,0 +1,4 @@
+# Let's ignore some files and directories
+
+# Generated binaries
+bin/
