@@ -14,10 +14,10 @@ public class Simulation {
 	// Constructor
 	public Simulation() {
 		// To test the random process generation, let's create a bunch of processes and print them to the screen (log)
-		while (Process.num_of_processes < 100) {
+		while (Process.numOfProcesses < 100) {
 			Process job = new Process();
 
-			System.out.println("Process created with ID: " + job.get_id() + ", Size: " + job.get_size() + "k, and Time: " + job.get_time());
+			System.out.println("Process created with ID: " + job.getId() + ", Size: " + job.getSize() + "k, and Time: " + job.getTime());
 		}
 	}
 

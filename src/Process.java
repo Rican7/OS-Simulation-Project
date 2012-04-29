@@ -1,84 +1,84 @@
 // Process class 
 public class Process {
 	// Declare final variables (constants)
-	private static final int min_size = 256; // Lowest possible memory size for a process
-	private static final int max_size = 2048; // Highest possible memory size for a process
-	private static final int size_stepping = 64; // Memory stepping
-	private static final int min_time = 3; // Lowest possible cpu time
-	private static final int max_time = 15; // Highest possible cpu time
-	private static final int time_stepping = 3; // CPU time stepping
+	private static final int MIN_SIZE = 256; // Lowest possible memory size for a process
+	private static final int MAX_SIZE = 2048; // Highest possible memory size for a process
+	private static final int SIZE_STEPPING = 64; // Memory stepping
+	private static final int MIN_TIME = 3; // Lowest possible cpu time
+	private static final int MAX_TIME = 15; // Highest possible cpu time
+	private static final int TIME_STEPPING = 3; // CPU time stepping
 
 	// Declare static (global) variables
-	public static int num_of_processes = 0;
+	public static int numOfProcesses = 0;
 
 	// Declare properties
 	private int identifier;
 	private int size;
-	private int cpu_time;
+	private int cpuTime;
 
 	// Constructor
 	public Process() {
 		// Set the instances properties
-		identifier = generate_id();
-		size = generate_size();
-		cpu_time = generate_time();
+		identifier = generateId();
+		size = generateSize();
+		cpuTime = generateTime();
 
-		// Increment the num_of_processes
-		num_of_processes++;
+		// Increment the numOfProcesses
+		numOfProcesses++;
 	}
 
-	private int generate_id() {
+	private int generateId() {
 		// Return an id that is equal to the number of processes created
-		return num_of_processes;
+		return numOfProcesses;
 	}
 
 	// Private function to generate a process size with these limitations:
-	// Must be an int between min_size and max_size
-	// Int must be randomly generated in steps of size_stepping
-	private int generate_size() {
+	// Must be an int between minSize and maxSize
+	// Int must be randomly generated in steps of sizeStepping
+	private int generateSize() {
 		// Create the random number's maximum range
-		int rand_max = ( max_size / size_stepping ) - ( min_size / size_stepping ) + 1;
+		int randMax = ( MAX_SIZE / SIZE_STEPPING ) - ( MIN_SIZE / SIZE_STEPPING ) + 1;
 
 		// Generate a random int within the constraints
-		int n = Simulation.random.nextInt( rand_max );
+		int n = Simulation.random.nextInt( randMax );
 
 		// Use a y-intercept style function of n to calculate the int within its constraints
-		int size = ( size_stepping * n ) + min_size;
+		int size = ( SIZE_STEPPING * n ) + MIN_SIZE;
 
 		// Return the calculated size. :)
 		return size;
 	}
 
 	// Private function to generate a process's required cpu time with these limitations:
-	// Must be an int between min_time and max_time
-	// Int must be randomly generated in steps of time_stepping
-	private int generate_time() {
+	// Must be an int between MIN_TIME and MAX_TIME
+	// Int must be randomly generated in steps of TIME_STEPPING
+	private int generateTime() {
 		// Create the random number's maximum range
-		int rand_max = ( max_time / time_stepping ) - ( min_time / time_stepping ) + 1;
+		int randMax = ( MAX_TIME / TIME_STEPPING ) - ( MIN_TIME / TIME_STEPPING ) + 1;
 
 		// Generate a random int within the constraints
-		int n = Simulation.random.nextInt( rand_max );
+		int n = Simulation.random.nextInt( randMax );
 
 		// Use a y-intercept style function of n to calculate the int within its constraints
-		int time = ( time_stepping * n ) + min_time;
+		int time = ( TIME_STEPPING * n ) + MIN_TIME;
 
 		// Return the calculated time. :)
 		return time;
 	}
 
 	// Public function to get the process's identifier
-	public int get_id() {
+	public int getId() {
 		return identifier;
 	}
 
 	// Public function to get the process's memory size
-	public int get_size() {
+	public int getSize() {
 		return size;
 	}
 
 	// Public function to get the process's cpu time
-	public int get_time() {
-		return cpu_time;
+	public int getTime() {
+		return cpuTime;
 	}
 
 } // End Process class
