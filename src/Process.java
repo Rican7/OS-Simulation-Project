@@ -44,6 +44,7 @@ public class Process {
 		this(-1, -1);
 	}
 
+	// Private function to generate a unique process identifier
 	private int generateId() {
 		// Return an id that is equal to the number of processes created
 		return numOfProcesses;
