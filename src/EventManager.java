@@ -2,10 +2,13 @@
 import java.util.ArrayList;
 import java.util.HashMap;
 
+// External imports
+import com.google.common.collect.*;
+
 // Event Manager class
 public class EventManager {
 	// Declare properties
-	private HashMap<String, ArrayList<Integer>> systemStates;
+	private Multimap<String, Integer> systemStates;
 
 	// Constructor
 	public EventManager() {
@@ -14,10 +17,10 @@ public class EventManager {
 
 	}
 
-	// Private function to build the system state array/hashmap
+	// Private function to build the system state array/multimap
 	private void buildStateMap() {
-		// First of all, let's instanciate a hashmap
-		systemStates = new HashMap<String, ArrayList<Integer>>(6);
+		// First of all, let's instanciate a multimap
+		systemStates = ArrayListMultimap.create();
 
 		// Create a simple array containing the names of the keys of the map
 		String[] stateNames = {"Hold", "Ready", "Run", "Suspend", "Blocked", "Done"};
@@ -25,8 +28,8 @@ public class EventManager {
 		// Let's loop through the name array
 		for (String name : stateNames) {
 			// Let's create an arraylist for each key
-			systemStates.put(name, new ArrayList<Integer>());
-			System.out.println("HashMap key: " + name + " added. HashMap size: " + systemStates.size());
+			systemStates.put(name, 0);
+			System.out.println("Multimap key: " + name + " added. Multimap size: " + systemStates.size());
 		}
 	}
 }
