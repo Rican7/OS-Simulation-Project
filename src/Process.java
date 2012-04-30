@@ -21,18 +21,9 @@ public class Process {
 		// Let's generate a process ID
 		identifier = generateId();
 
-		// If the sent parameters were -1, let's generate some valid properties
-		if (setSize == -1 || setTime == -1) {
-			// Set the instances properties
-			size = generateSize();
-			cpuTime = generateTime();
-		}
-		// Otherwise, let's take the passed values
-		else {
-			// Set the instances properties
-			size = setSize;
-			cpuTime = setTime;
-		}
+		// Set the instances properties
+		size = setSize;
+		cpuTime = setTime;
 
 		// Increment the numOfProcesses
 		numOfProcesses++;
@@ -40,8 +31,8 @@ public class Process {
 
 	// Empty parameter constructor
 	public Process() {
-		// Call the constructor with invalid parameters to have them self-generate
-		this(-1, -1);
+		// Let's generate some parameters and call the normal function
+		this(generateSize(), generateTime());
 	}
 
 	// Private function to generate a unique process identifier
@@ -53,7 +44,7 @@ public class Process {
 	// Private function to generate a process size with these limitations:
 	// Must be an int between minSize and maxSize
 	// Int must be randomly generated in steps of sizeStepping
-	private int generateSize() {
+	private static int generateSize() {
 		// Create the random number's maximum range
 		int randMax = ( MAX_SIZE / SIZE_STEPPING ) - ( MIN_SIZE / SIZE_STEPPING ) + 1;
 
@@ -70,7 +61,7 @@ public class Process {
 	// Private function to generate a process's required cpu time with these limitations:
 	// Must be an int between MIN_TIME and MAX_TIME
 	// Int must be randomly generated in steps of TIME_STEPPING
-	private int generateTime() {
+	private static int generateTime() {
 		// Create the random number's maximum range
 		int randMax = ( MAX_TIME / TIME_STEPPING ) - ( MIN_TIME / TIME_STEPPING ) + 1;
 
