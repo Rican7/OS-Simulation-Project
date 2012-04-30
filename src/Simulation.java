@@ -43,7 +43,17 @@ public class Simulation {
 
 			// Add the process to the event manager's map
 			events.addProcess(job, STATE_NAMES[state]);
-			System.out.println("Process created at state: " + STATE_NAMES[state] + " with ID: " + job.getId() + ", Size: " + job.getSize() + "k, and Time: " + job.getTime());
+			System.out.println("Process created at state: \"" + STATE_NAMES[state] + "\" with ID: " + job.getId() + ", Size: " + job.getSize() + "k, and Time: " + job.getTime());
+		}
+
+		// Now, let's create our initially inactive/held jobs
+		for (int i = 0; i < INITIAL_NUM_HELD; i++) {
+			// Create the process
+			Process job = new Process();
+
+			// Add the process to the event manager's map
+			events.addProcess(job, "Hold");
+			System.out.println("Process created at state: \"Hold\" with ID: " + job.getId() + ", Size: " + job.getSize() + "k, and Time: " + job.getTime());
 		}
 	}
 
