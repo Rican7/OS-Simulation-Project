@@ -9,8 +9,8 @@ import java.util.Random;
 // Simulation main engine class
 public class Simulation {
 	// Declare final variables (constants)
-	private static final int MAX_MEMORY = 2048; // Total available user memory
-	private static final int MAX_EVENTS = 500; // Maximum number of events to be fired before quitting
+	public static final int MAX_MEMORY = 2048; // Total available user memory
+	public static final int MAX_EVENTS = 500; // Maximum number of events to be fired before quitting
 
 	private static final String[] STATE_NAMES = {"Hold", "Ready", "Run", "Suspend", "Blocked", "Done"};
 
@@ -24,11 +24,15 @@ public class Simulation {
 
 	// Class wide objects
 	private static EventManager events;
+	private static MemoryManager memory;
 
 	// Constructor
 	private static void run() {
 		// Let's create/start our event manager
-		 events = new EventManager();
+		events = new EventManager();
+
+		// Let's create our memory manager
+		memory = new MemoryManager();
 
 		// Let's initialize the system with our initial conditions
 		initialConditions();
@@ -44,6 +48,10 @@ public class Simulation {
 			// Add the process to the event manager's map
 			events.addProcess(job, STATE_NAMES[state]);
 			System.out.println("Process created at state: \"" + STATE_NAMES[state] + "\" with ID: " + job.getId() + ", Size: " + job.getSize() + "k, and Time: " + job.getTime());
+
+			// Add the process to the system's memory
+			memory.addProcess(job);
+			System.out.println("Process " + job.getId() + " added to memory with size " + job.getSize() + "k");
 		}
 
 		// Now, let's create our initially inactive/held jobs
