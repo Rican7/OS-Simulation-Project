@@ -19,11 +19,11 @@ public class Process {
 	// Constructor
 	public Process(int setSize, int setTime) {
 		// Let's generate a process ID
-		identifier = generateId();
+		this.identifier = generateId();
 
 		// Set the instances properties
-		size = setSize;
-		cpuTime = setTime;
+		this.size = setSize;
+		this.cpuTime = setTime;
 
 		// Increment the numOfProcesses
 		numOfProcesses++;
@@ -77,17 +77,17 @@ public class Process {
 
 	// Public function to get the process's identifier
 	public int getId() {
-		return identifier;
+		return this.identifier;
 	}
 
 	// Public function to get the process's memory size
 	public int getSize() {
-		return size;
+		return this.size;
 	}
 
 	// Public function to get the process's cpu time
 	public int getTime() {
-		return cpuTime;
+		return this.cpuTime;
 	}
 
 } // End Process class
