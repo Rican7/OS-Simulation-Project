@@ -1,6 +1,7 @@
 // Imports (libraries and utilities)
 import java.util.Map;
 import java.util.List;
+import java.util.Collection;
 
 // External imports
 import com.google.common.collect.*;
@@ -75,6 +76,29 @@ public class EventManager {
 		return false;
 	}
 
+	// Private function to remove a process from the event manager
+	private boolean removeProcess(Process process) {
+		// Let's first check if the given process is even in the event manager
+		if (this.systemStates.containsValue(process)) {
+			// Ok, well, let's get rid of it, then
+			// First, let's get a collection of all of the values
+			Collection<Process> processes = this.systemStates.values();
+
+			// Now, let's remove the given process from that collection
+			if (processes.remove(process)) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	// Private function to remove a process from a particular state
+	private boolean removeProcessFromState(Process process, String state) {
+		// Let's simply return the boolean value of the remove operation
+		return this.systemStates.remove(process, state);
+	}
+
 	// Public function to get the process from the given state
 	@Nullable public Process getProcess(String state) {
 		// Let's create a process to be returned
@@ -90,5 +114,27 @@ public class EventManager {
 		}
 
 		return process;
+	}
+
+	// Public function to change the state of a process given the Event
+	public boolean changeProcessState(Event event) {
+		// Let's first check if the destination state isn't full
+		if (this.isStateFull(event.to) != true) {
+			// Let's get the first process in the "from" location; "First-out"
+			Process process = this.getProcess(event.from); // May be null
+
+			// If we actually got back a process
+			if (process != null) {
+				// Let's remove the process from the original state
+				// AND Let's now add the process to the destination state
+				if (this.removeProcessFromState(process, event.from) && this.addProcess(process, event.to)) {
+					// If we made it here, everything worked
+					return true;
+				}
+			}
+		}
+
+		// If it got here, it didn't succeed
+		return false;
 	}
 }
