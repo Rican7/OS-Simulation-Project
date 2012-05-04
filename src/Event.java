@@ -14,7 +14,7 @@ class Event {
 	// Public function to convert the event into a string
 	public String toString() {
 		// Create a string from the object's properties
-		String string = from + " -> " + to;
+		String string = this.from + " -> " + this.to;
 
 		return string;
 	}
