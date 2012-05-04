@@ -5,8 +5,10 @@
 
 // Imports (libraries and utilities)
 import java.util.List;
-import java.util.ArrayList;
 import java.util.Random;
+
+// External imports
+import com.google.common.collect.*;
 
 // Simulation main engine class
 public class Simulation {
@@ -37,11 +39,14 @@ public class Simulation {
 		// Let's create our memory manager
 		memory = new MemoryManager();
 
+		// Let's fill our event array list with our randomized events
+		buildEventsList();
+
 		// Let's initialize the system with our initial conditions
 		initialConditions();
 
-		// Let's fill our event array list with our randomized events
-		buildEventsList();
+		// Ok. Everything's set up, so let's run the system
+		startSystem();
 	}
 
 	// Private function to setup the initial conditions
@@ -74,7 +79,7 @@ public class Simulation {
 	// Private function to build the event list
 	private static void buildEventsList() {
 		// First of all, let's instanciate an array list
-		events = new ArrayList<Event>();
+		events = Lists.newArrayList();
 
 		// Let's add our events to the array list
 		events.add(new Event("Hold", "Ready")); // Event from and to
@@ -89,6 +94,14 @@ public class Simulation {
 		events.add(new Event("Suspend", "Ready")); // Timer/System
 		events.add(new Event("Run", "Done"));
 		events.add(new Event("Ready", "Hold"));
+	}
+
+	// Private function to actually start the system
+	private static void startSystem() {
+		// Testing the state limit
+		for (int i = 0; i < 10; i++) {
+			System.out.println(states.addProcess(new Process(), "Ready"));
+		}
 	}
 
 	// Main function
