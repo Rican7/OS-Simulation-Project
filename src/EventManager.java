@@ -96,16 +96,22 @@ public class EventManager {
 	// Private function to remove a process from a particular state
 	private boolean removeProcessFromState(Process process, String state) {
 		// Let's simply return the boolean value of the remove operation
-		return this.systemStates.remove(process, state);
+		return this.systemStates.remove(state, process);
 	}
 
-	// Public function to get the process from the given state
+	// Public function to get all the processes in a given state
+	public List<Process> getProcesses(String state) {
+		// Get a list of processes in the given state
+		return this.systemStates.get(state);
+	}
+
+	// Public function to get the first process from the given state
 	@Nullable public Process getProcess(String state) {
 		// Let's create a process to be returned
 		Process process = null; // Process may be null. We may not get back a process
 
 		// Get a list of processes in the given state
-		List<Process> processes = this.systemStates.get(state);
+		List<Process> processes = this.getProcesses(state);
 
 		// Let's make sure the list of processes in that state aren't empty
 		if (processes.isEmpty() != true) {
