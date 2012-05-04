@@ -6,6 +6,7 @@
 // Imports (libraries and utilities)
 import java.util.List;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Random;
 
 // External imports
@@ -28,7 +29,7 @@ public class Simulation {
 	public static Random random;
 
 	// Class wide objects
-	private static boolean debugMode;
+	public static boolean debugMode;
 	private static EventManager states;
 	private static MemoryManager memory;
 	private static List<Event> events;
@@ -152,6 +153,27 @@ public class Simulation {
 					}
 				}
 			}
+			// For a Ready->Hold event, let's remove the largest process in memory
+			else if (event.from == "Ready" && event.to == "Hold") {
+				// Let's grab a list of all of the current processes in the Ready state
+				List<Process> readyProcesses = states.getProcesses(event.from);
+				System.out.println(readyProcesses.toString());
+
+				// Let's make sure there ARE ready processes
+				if (readyProcesses.isEmpty() != true) {
+					// Let's get the largest process in that list
+					Process largestReadyProcess = Collections.max(readyProcesses);
+
+					// If the process is successfully removed from memory
+					if (memory.removeProcess(largestReadyProcess)) {
+						// Let's change the processes state
+						if (states.changeProcessState(event)) {
+							// If we made it here, the event has succeeded
+							return true;
+						}
+					}
+				}
+			}
 		}
 		
 		return false;
@@ -195,6 +217,12 @@ public class Simulation {
 
 			// If the event succeeded
 			if (eventSucceeded) {
+			}
+			else {
+				// Only show if debugMode is on
+				if (debugMode) {
+					System.out.println("Event failed: " + generatedEvent.toString());
+				}
 			}
 
 			// Let's check to see if the system has finished its job
