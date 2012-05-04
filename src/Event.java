@@ -10,4 +10,12 @@ class Event {
 		this.from = from;
 		this.to = to;
 	}
+
+	// Public function to convert the event into a string
+	public String toString() {
+		// Create a string from the object's properties
+		String string = from + " -> " + to;
+
+		return string;
+	}
 }
