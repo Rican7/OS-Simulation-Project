@@ -30,6 +30,8 @@ public class Simulation {
 	private static EventManager states;
 	private static MemoryManager memory;
 	private static List<Event> events;
+	private static boolean systemRunning;
+	private static int totalEventCount;
 
 	// Constructor
 	private static void run() {
@@ -96,11 +98,51 @@ public class Simulation {
 		events.add(new Event("Ready", "Hold"));
 	}
 
+	// Private function to generate a random event from the events list
+	private static Event generateRandomEvent() {
+		// Create the number's maximum range
+		int randMax = events.size();
+
+		// Generate a random int within the constraints
+		int n = random.nextInt(randMax);
+
+		// Let's get the event at that random position n
+		Event generatedEvent = events.get(n);
+		System.out.println(generatedEvent.toString());
+
+		// Return the randomly generated event
+		return generatedEvent;
+	}
+
+	// Private function to check if the system has finished its job
+	private static boolean checkFinished() {
+		if (totalEventCount == 500) {
+			return true;
+		}
+
+		// TODO: Create other finish conditions
+
+		// If it got here, the system hasn't finished yet
+		return false;
+	}
+
 	// Private function to actually start the system
 	private static void startSystem() {
-		// Testing the state limit
-		for (int i = 0; i < 10; i++) {
-			System.out.println(states.addProcess(new Process(), "Ready"));
+		// Mark the system as running
+		systemRunning = true;
+
+		// While the system is still running
+		while (systemRunning) {
+			// Let's generate a random event
+			generateRandomEvent();
+
+			// Let's increment the total number of events that have been generated
+			totalEventCount++;
+
+			// Let's check to see if the system has finished its job
+			if (checkFinished()) {
+				systemRunning = false;
+			}
 		}
 	}
 
