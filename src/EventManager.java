@@ -1,13 +1,15 @@
 // Imports (libraries and utilities)
 import java.util.Map;
+import java.util.List;
 
 // External imports
 import com.google.common.collect.*;
+import com.sun.istack.internal.Nullable;
 
 // Event Manager class
 public class EventManager {
 	// Declare properties
-	private Multimap<String, Process> systemStates;
+	private ArrayListMultimap<String, Process> systemStates;
 	private Map<String, Integer> stateLimits;
 
 	// Constructor
@@ -61,7 +63,6 @@ public class EventManager {
 
 	// Public function to add processes to the event manager
 	public boolean addProcess(Process process, String initialState) {
-		this.isStateFull(initialState);
 		// Let's first check if the state we're trying to put this process in is full
 		if (this.isStateFull(initialState) != true) {
 			// Let's add the process to the state map
@@ -72,5 +73,22 @@ public class EventManager {
 		}
 
 		return false;
+	}
+
+	// Public function to get the process from the given state
+	@Nullable public Process getProcess(String state) {
+		// Let's create a process to be returned
+		Process process = null; // Process may be null. We may not get back a process
+
+		// Get a list of processes in the given state
+		List<Process> processes = this.systemStates.get(state);
+
+		// Let's make sure the list of processes in that state aren't empty
+		if (processes.isEmpty() != true) {
+			// Return the first process in the list (at key/index 0)
+			process = processes.get(0);
+		}
+
+		return process;
 	}
 }

@@ -90,4 +90,12 @@ public class Process {
 		return this.cpuTime;
 	}
 
+	// Public function to convert the Process into a string
+	public String toString() {
+		// Create a string from the object's properties
+		String string = "Process #" + this.getId() + "/" + this.getSize() + "k/" + this.getTime() + "t";
+
+		return string;
+	}
+
 } // End Process class
