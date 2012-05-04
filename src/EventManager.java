@@ -48,7 +48,6 @@ public class EventManager {
 
 			// Get a count of the number of times a key appears in that set
 			int stateProcessCount = keys.count(state);
-			System.out.println(stateProcessCount + " out of " + stateLimit);
 
 			// If the number of processes in that state are at the limit
 			if (stateProcessCount == stateLimit) {
