@@ -140,6 +140,18 @@ public class Simulation {
 			}
 
 			// For a hold->ready event, let's make sure the system has enough memory to hold the new process
+			if (event.from == "Hold" && event.to == "Ready") {
+				if (memory.getMemoryAvailable() >= process.getSize()) {
+					// If the process is successfully added to memory
+					if (memory.addProcess(process)) {
+						// Let's change the processes state
+						if (states.changeProcessState(event)) {
+							// If we made it here, the event has succeeded
+							return true;
+						}
+					}
+				}
+			}
 		}
 		
 		return false;
@@ -159,6 +171,9 @@ public class Simulation {
 
 	// Private function to actually start the system
 	private static void startSystem() {
+		// Let's keep track of some variables
+		int currentCpuTime = 0; // The current amount of CPU time that the process in "Run" has used
+
 		// Mark the system as running
 		systemRunning = true;
 
@@ -176,7 +191,11 @@ public class Simulation {
 			}
 
 			// Let's actually fire the event that's been generated
-			fireEvent(generatedEvent);
+			boolean eventSucceeded = fireEvent(generatedEvent);
+
+			// If the event succeeded
+			if (eventSucceeded) {
+			}
 
 			// Let's check to see if the system has finished its job
 			if (checkFinished()) {

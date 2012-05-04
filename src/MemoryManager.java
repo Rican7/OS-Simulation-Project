@@ -1,5 +1,6 @@
 // Imports (libraries and utilities)
 import java.util.ArrayList;
+import java.util.Collections;
 
 // External imports
 import com.google.common.collect.*;
@@ -36,7 +37,7 @@ public class MemoryManager {
 	}
 
 	// Private function to get the amount of memory available/unused
-	private int getMemoryAvailable() {
+	public int getMemoryAvailable() {
 		return Simulation.MAX_MEMORY - this.getMemoryUsed();
 	}
 
@@ -53,5 +54,10 @@ public class MemoryManager {
 
 		// Let's return true for now. Nothing can possibly fail.
 		return false;
+	}
+
+	// Private function to get the single largest process in memory
+	private Process getLargestProcess() {
+		return Collections.max(systemMemory);
 	}
 }

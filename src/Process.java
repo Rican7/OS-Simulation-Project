@@ -1,5 +1,5 @@
 // Process class 
-public class Process {
+public class Process implements Comparable<Process> {
 	// Declare final variables (constants)
 	private static final int MIN_SIZE = 256; // Lowest possible memory size for a process
 	private static final int MAX_SIZE = 1024; // Highest possible memory size for a process
@@ -88,6 +88,19 @@ public class Process {
 	// Public function to get the process's cpu time
 	public int getTime() {
 		return this.cpuTime;
+	}
+
+	// Private function compareTo, implementing the Comparable interface
+	public int compareTo(Process process) {
+		if (this.getSize() < process.getSize()) {
+			return -1;
+		}
+		else if (this.getSize() > process.getSize()) {
+			return 1;
+		}
+
+		// If it got here, it must be equal
+		return 0;
 	}
 
 	// Public function to convert the Process into a string
