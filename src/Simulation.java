@@ -147,7 +147,7 @@ public class Simulation {
 
 	// Private function to check if the system has finished its job
 	private static boolean checkFinished() {
-		if (totalEventCount == 500) {
+		if (totalEventCount == MAX_EVENTS) {
 			return true;
 		}
 
