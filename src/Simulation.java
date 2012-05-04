@@ -4,6 +4,8 @@
 /********************************/
 
 // Imports (libraries and utilities)
+import java.util.List;
+import java.util.ArrayList;
 import java.util.Random;
 
 // Simulation main engine class
@@ -12,7 +14,7 @@ public class Simulation {
 	public static final int MAX_MEMORY = 2048; // Total available user memory
 	public static final int MAX_EVENTS = 500; // Maximum number of events to be fired before quitting
 
-	private static final String[] STATE_NAMES = {"Hold", "Ready", "Run", "Suspend", "Blocked", "Done"};
+	private static final String[] STATE_NAMES = {"Hold", "Ready", "Run", "Suspend", "Blocked", "Done"}; // The names of each possible state
 
 	private static final int[] INITIAL_JOB_STATES = {1, 3, 4}; // The initially active job states (correspond with the state names key/index)
 	private static final int INITIAL_JOB_SIZE = 320; // The amount of memory that each initial ACTIVE job has
@@ -23,19 +25,23 @@ public class Simulation {
 	public static Random random;
 
 	// Class wide objects
-	private static EventManager events;
+	private static EventManager states;
 	private static MemoryManager memory;
+	private static List<Event> events;
 
 	// Constructor
 	private static void run() {
 		// Let's create/start our event manager
-		events = new EventManager();
+		states = new EventManager();
 
 		// Let's create our memory manager
 		memory = new MemoryManager();
 
 		// Let's initialize the system with our initial conditions
 		initialConditions();
+
+		// Let's fill our event array list with our randomized events
+		buildEventsList();
 	}
 
 	// Private function to setup the initial conditions
@@ -46,7 +52,7 @@ public class Simulation {
 			Process job = new Process(INITIAL_JOB_SIZE, INITIAL_JOB_TIME);
 
 			// Add the process to the event manager's map
-			events.addProcess(job, STATE_NAMES[state]);
+			states.addProcess(job, STATE_NAMES[state]);
 			System.out.println("Process created at state: \"" + STATE_NAMES[state] + "\" with ID: " + job.getId() + ", Size: " + job.getSize() + "k, and Time: " + job.getTime());
 
 			// Add the process to the system's memory
@@ -60,9 +66,29 @@ public class Simulation {
 			Process job = new Process();
 
 			// Add the process to the event manager's map
-			events.addProcess(job, "Hold");
+			states.addProcess(job, "Hold");
 			System.out.println("Process created at state: \"Hold\" with ID: " + job.getId() + ", Size: " + job.getSize() + "k, and Time: " + job.getTime());
 		}
+	}
+
+	// Private function to build the event list
+	private static void buildEventsList() {
+		// First of all, let's instanciate an array list
+		events = new ArrayList<Event>();
+
+		// Let's add our events to the array list
+		events.add(new Event("Hold", "Ready")); // Event from and to
+		events.add(new Event("Ready", "Run"));
+		events.add(new Event("Run", "Blocked"));
+		events.add(new Event("Blocked", "Ready"));
+		events.add(new Event("Run", "Suspend")); // User
+		events.add(new Event("Run", "Suspend")); // Timer/System
+		events.add(new Event("Blocked", "Done")); // System killed
+		events.add(new Event("Suspend", "Done")); // User killed
+		events.add(new Event("Suspend", "Ready")); // User
+		events.add(new Event("Suspend", "Ready")); // Timer/System
+		events.add(new Event("Run", "Done"));
+		events.add(new Event("Ready", "Hold"));
 	}
 
 	// Main function
