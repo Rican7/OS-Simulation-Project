@@ -5,6 +5,7 @@
 
 // Imports (libraries and utilities)
 import java.util.List;
+import java.util.Arrays;
 import java.util.Random;
 
 // External imports
@@ -27,6 +28,7 @@ public class Simulation {
 	public static Random random;
 
 	// Class wide objects
+	private static boolean debugMode;
 	private static EventManager states;
 	private static MemoryManager memory;
 	private static List<Event> events;
@@ -60,11 +62,19 @@ public class Simulation {
 
 			// Add the process to the event manager's map
 			states.addProcess(job, STATE_NAMES[state]);
-			System.out.println("Process created at state: \"" + STATE_NAMES[state] + "\" with ID: " + job.getId() + ", Size: " + job.getSize() + "k, and Time: " + job.getTime());
+
+			// Only show if debugMode is on
+			if (debugMode) {
+				System.out.println("Process created at state: \"" + STATE_NAMES[state] + "\" with ID: " + job.getId() + ", Size: " + job.getSize() + "k, and Time: " + job.getTime());
+			}
 
 			// Add the process to the system's memory
 			memory.addProcess(job);
-			System.out.println("Process " + job.getId() + " added to memory with size " + job.getSize() + "k");
+
+			// Only show if debugMode is on
+			if (debugMode) {
+				System.out.println("Process " + job.getId() + " added to memory with size " + job.getSize() + "k");
+			}
 		}
 
 		// Now, let's create our initially inactive/held jobs
@@ -74,7 +84,11 @@ public class Simulation {
 
 			// Add the process to the event manager's map
 			states.addProcess(job, "Hold");
-			System.out.println("Process created at state: \"Hold\" with ID: " + job.getId() + ", Size: " + job.getSize() + "k, and Time: " + job.getTime());
+
+			// Only show if debugMode is on
+			if (debugMode) {
+				System.out.println("Process created at state: \"Hold\" with ID: " + job.getId() + ", Size: " + job.getSize() + "k, and Time: " + job.getTime());
+			}
 		}
 	}
 
@@ -108,10 +122,27 @@ public class Simulation {
 
 		// Let's get the event at that random position n
 		Event generatedEvent = events.get(n);
-		System.out.println(generatedEvent.toString());
 
 		// Return the randomly generated event
 		return generatedEvent;
+	}
+
+	// Private function to fire the event passed to it
+	private static boolean fireEvent(Event event) {
+		// Let's get the first process in the "from" location
+		Process process = states.getProcess(event.from); // May be null
+
+		// If we actually got back a process
+		if (process != null) {
+			// Only show if debugMode is on
+			if (debugMode) {
+				System.out.println(process.toString());
+			}
+
+			// For a hold->ready event, let's make sure the system has enough memory to hold the new process
+		}
+		
+		return false;
 	}
 
 	// Private function to check if the system has finished its job
@@ -134,10 +165,18 @@ public class Simulation {
 		// While the system is still running
 		while (systemRunning) {
 			// Let's generate a random event
-			generateRandomEvent();
+			Event generatedEvent = generateRandomEvent();
 
 			// Let's increment the total number of events that have been generated
 			totalEventCount++;
+
+			// Only show if debugMode is on
+			if (debugMode) {
+				System.out.println(generatedEvent.toString());
+			}
+
+			// Let's actually fire the event that's been generated
+			fireEvent(generatedEvent);
 
 			// Let's check to see if the system has finished its job
 			if (checkFinished()) {
@@ -150,6 +189,14 @@ public class Simulation {
 	public static void main(String[] args) {
 		// Instanciate program wide objects
 		random = new Random();
+
+		// Let's get all the arguments as an array
+		List<String> arguments = Arrays.asList(args);
+		
+		// If debug mode has been passed, lets enable it
+		if (arguments.contains("debug")) {
+			debugMode = true;
+		}
 
 		// Begin the simulation
 		run();
