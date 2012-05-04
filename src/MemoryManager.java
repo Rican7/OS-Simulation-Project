@@ -65,32 +65,23 @@ public class MemoryManager {
 	public boolean removeProcess(Process process) {
 		// Let's get the index of the process in the array list
 		int index = this.systemMemory.indexOf(process);
+			// Only show if debugMode is on
+			if (Simulation.debugMode) {
+				System.out.println(index);
+			}
 
 		// Ok, now let's remove this process from the manager
 		try {
 			this.systemMemory.remove(index);
+
+			// If it worked, return true
+			return true;
 		}
 		catch (IndexOutOfBoundsException exception) {
 			// Only show if debugMode is on
 			if (Simulation.debugMode) {
 				System.out.println("Error remove process from the memory manager: " + exception);
 			}
-
-			// If it worked, return true
-			return true;
-		}
-
-		return false;
-	}
-
-	// Public function to remove the largest process from memory
-	public boolean removeLargestProcess() {
-		// Let's get the largest proecss
-		Process largest = this.getLargestProcess();
-
-		// Ok, now let's remove it
-		if (this.removeProcess(largest)) {
-			return true;
 		}
 
 		return false;
