@@ -2,6 +2,7 @@
 import java.util.Map;
 import java.util.List;
 import java.util.Collection;
+import java.util.Collections;
 
 // External imports
 import com.google.common.collect.*;
@@ -36,6 +37,7 @@ public class EventManager {
 		// Let's add our state limits
 		this.stateLimits.put("Ready", 4);
 		this.stateLimits.put("Blocked", 6);
+		this.stateLimits.put("Run", 1);
 	}
 
 	// Private function to detect if the system state is full
@@ -46,11 +48,11 @@ public class EventManager {
 			// Get the states limit
 			int stateLimit = this.stateLimits.get(state);
 
-			// Let's get a Multiset of the keys found in the state map
-			Multiset<String> keys = this.systemStates.keys();
+			// Let's grab a list of all of the current processes in the given state
+			List<Process> processes = this.getProcesses(state);
 
 			// Get a count of the number of times a key appears in that set
-			int stateProcessCount = keys.count(state);
+			int stateProcessCount = processes.size();
 
 			// If the number of processes in that state are at the limit
 			if (stateProcessCount == stateLimit) {
@@ -60,6 +62,15 @@ public class EventManager {
 		}
 
 		return false;
+	}
+
+	// Public function to detect if the system state is empty
+	public boolean isStateEmpty(String state) {
+		// Let's grab a list of all of the current processes in the given state
+		List<Process> processes = this.getProcesses(state);
+
+		// Let's return the lists isEmpty boolean value
+		return processes.isEmpty();
 	}
 
 	// Public function to detect if adding the process to the given state is possible
@@ -128,6 +139,23 @@ public class EventManager {
 		if (processes.isEmpty() != true) {
 			// Return the first process in the list (at key/index 0)
 			process = processes.get(0);
+		}
+
+		return process;
+	}
+
+	// Public function to get the single largest process in a given state's memory
+	@Nullable public Process getLargestProcess(String state) {
+		// Let's create a process to be returned
+		Process process = null; // Process may be null. We may not get back a process
+
+		// Get a list of processes in the given state
+		List<Process> processes = this.getProcesses(state);
+
+		// Let's make sure the list of processes in that state aren't empty
+		if (processes.isEmpty() != true) {
+			// Return the first process in the list (at key/index 0)
+			process = Collections.max(processes);
 		}
 
 		return process;
