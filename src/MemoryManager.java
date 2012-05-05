@@ -75,15 +75,15 @@ public class MemoryManager {
 	public boolean removeProcess(Process process) {
 		// Let's get the index of the process in the array list
 		int index = this.systemMemory.indexOf(process);
-			// Only show if debugMode is on
-			if (Simulation.debugMode) {
-				System.out.println(this.systemMemory.contains(process));
-				System.out.println(index);
-			}
 
 		// Ok, now let's remove this process from the manager
 		try {
 			this.systemMemory.remove(index);
+
+			// Only show if debugMode is on
+			if (Simulation.debugMode) {
+				System.out.println(process.toString() + " removed from memory");
+			}
 
 			// If it worked, return true
 			return true;
