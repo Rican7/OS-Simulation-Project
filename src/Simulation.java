@@ -142,14 +142,12 @@ public class Simulation {
 
 			// For a hold->ready event, let's make sure the system has enough memory to hold the new process
 			if (event.from == "Hold" && event.to == "Ready") {
-				if (memory.getMemoryAvailable() >= process.getSize()) {
-					// If the process is successfully added to memory
-					if (memory.addProcess(process)) {
-						// Let's change the processes state
-						if (states.changeProcessState(event)) {
-							// If we made it here, the event has succeeded
-							return true;
-						}
+				// Let's make sure this is all possible
+				if (memory.isAddPossible(process) && states.isAddPossible(process, event.to)) {
+					// If the process is successfully added to memory AND the process successfully changed state 
+					if (memory.addProcess(process) && states.changeProcessState(event)) {
+						// If we made it here, the event has succeeded
+						return true;
 					}
 				}
 			}
@@ -157,20 +155,29 @@ public class Simulation {
 			else if (event.from == "Ready" && event.to == "Hold") {
 				// Let's grab a list of all of the current processes in the Ready state
 				List<Process> readyProcesses = states.getProcesses(event.from);
-				System.out.println(readyProcesses.toString());
 
 				// Let's make sure there ARE ready processes
 				if (readyProcesses.isEmpty() != true) {
 					// Let's get the largest process in that list
 					Process largestReadyProcess = Collections.max(readyProcesses);
 
-					// If the process is successfully removed from memory
-					if (memory.removeProcess(largestReadyProcess)) {
-						// Let's change the processes state
-						if (states.changeProcessState(event)) {
+					// Let's make sure this is all possible
+					if (states.isAddPossible(process, event.to)) {
+						// If the process is successfully removed from memory AND the process successfully changed state 
+						if (memory.removeProcess(largestReadyProcess) && states.changeProcessState(event)) {
 							// If we made it here, the event has succeeded
 							return true;
 						}
+					}
+				}
+			}
+			else {
+				// Let's make sure this is all possible
+				if (states.isAddPossible(process, event.to)) {
+					// Let's change the processes state
+					if (states.changeProcessState(event)) {
+						// If we made it here, the event has succeeded
+						return true;
 					}
 				}
 			}
