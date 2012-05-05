@@ -6,7 +6,6 @@
 // Imports (libraries and utilities)
 import java.util.List;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Random;
 
 // External imports
@@ -24,6 +23,7 @@ public class Simulation {
 	private static final int INITIAL_JOB_SIZE = 320; // The amount of memory that each initial ACTIVE job has
 	private static final int INITIAL_JOB_TIME = 6; // The CPU time requirement of each initially ACTIVE job
 	private static final int INITIAL_NUM_HELD = 10; // The number of initially inactive/held jobs
+	private static final int TOTAL_NUM_JOBS = INITIAL_JOB_STATES.length + INITIAL_NUM_HELD; // The total number of jobs in the OS Simulation
 
 	private static final int PROCESS_RUN_TIME = 3; // The number of "CPU Time Units" that the currently running process uses on each event cycle
 
@@ -234,11 +234,25 @@ public class Simulation {
 
 	// Private function to check if the system has finished its job
 	private static boolean checkFinished() {
+		// If the total number of generated events has hit 500
 		if (totalEventCount == MAX_EVENTS) {
+			// Only show if debugMode is on
+			if (debugMode) {
+				System.out.println("STOPPING! The maximum number of events: " + MAX_EVENTS + " have been generated. We're not getting anywhere.");
+			}
+
 			return true;
 		}
 
-		// TODO: Create other finish conditions
+		// If every job is in the "Done" state
+		if (TOTAL_NUM_JOBS == states.getProcessCount("Done")) {
+			// Only show if debugMode is on
+			if (debugMode) {
+				System.out.println("STOPPING! The OS is \"finished\". Every process is in the \"Done\" state.");
+			}
+
+			return true;
+		}
 
 		// If it got here, the system hasn't finished yet
 		return false;
