@@ -181,6 +181,174 @@ public class Simulation {
 					}
 				}
 			}
+			// For a Ready->Run event
+			else if (event.from == "Ready" && event.to == "Run") {
+				// Let's make sure this is all possible
+				if (states.isAddPossible(process, event.to)) {
+					// Let's first make sure that the Ready state isn't empty
+					if (states.isStateEmpty(event.from)) {
+						// We need to fire an event to get a process in the ready state
+						// Let's see if we can grab one from Suspend_System
+						if (fireEvent(new Event("Suspend_System", event.from)) != true) {
+							// If we couldn't grab one from Suspend_System, we should try to grab one from Hold
+							fireEvent(new Event("Hold", event.from));
+						}
+					}
+
+					// Let's first make sure that the Run state isn't full
+					if (states.isStateFull(event.to)) {
+						// We need to fire an event to get the process out of the run state
+						fireEvent(new Event(event.to, "Suspend_System"));
+					}
+
+					// If the process successfully changed state 
+					if (states.changeProcessState(event)) {
+						// If we made it here, the event has succeeded
+						return true;
+					}
+				}
+			}
+			// For a Run->Blocked event
+			else if (event.from == "Run" && event.to == "Blocked") {
+				// Let's make sure this is all possible
+				if (states.isAddPossible(process, event.to)) {
+					// Let's first make sure that the Blocked state isn't full
+					if (states.isStateFull(event.to)) {
+						// We need to fire an event to get the process out of the blocked state
+						fireEvent(new Event(event.to, "Done"));
+					}
+
+					// If the process successfully changed state 
+					if (states.changeProcessState(event)) {
+						// Ok, it succeeded, but now there's nothing "running" (in the run event), so let's fix that
+						fireEvent(new Event("Ready", event.from));
+
+						// If we made it here, the event has succeeded
+						return true;
+					}
+				}
+			}
+			// For a Blocked->Ready event
+			else if (event.from == "Blocked" && event.to == "Ready") {
+				// Let's make sure this is all possible
+				if (states.isAddPossible(process, event.to)) {
+					// Let's first make sure that the Ready state isn't full
+					if (states.isStateFull(event.to)) {
+						// We need to fire an event to get the process out of the blocked state
+						fireEvent(new Event(event.to, "Hold"));
+					}
+
+					// If the process successfully changed state 
+					if (states.changeProcessState(event)) {
+						// If we made it here, the event has succeeded
+						return true;
+					}
+				}
+			}
+			// For a Run->Suspend_User event
+			else if (event.from == "Run" && event.to == "Suspend_User") {
+				// Let's make sure this is all possible
+				if (states.isAddPossible(process, event.to)) {
+					// If the process successfully changed state 
+					if (states.changeProcessState(event)) {
+						// Ok, it succeeded, but now there's nothing "running" (in the run event), so let's fix that
+						fireEvent(new Event("Ready", event.from));
+
+						// If we made it here, the event has succeeded
+						return true;
+					}
+				}
+			}
+			// For a Run->Suspend_System event
+			else if (event.from == "Run" && event.to == "Suspend_System") {
+				// Let's make sure this is all possible
+				if (states.isAddPossible(process, event.to)) {
+					// If the process successfully changed state 
+					if (states.changeProcessState(event)) {
+						// Ok, it succeeded, but now there's nothing "running" (in the run event), so let's fix that
+						fireEvent(new Event("Ready", event.from));
+
+						// If we made it here, the event has succeeded
+						return true;
+					}
+				}
+			}
+			// For a Blocked->Done event
+			else if (event.from == "Blocked" && event.to == "Done") {
+				// Let's make sure this is all possible
+				if (states.isAddPossible(process, event.to)) {
+					// If the process is successfully removed from memory AND the process successfully changed state 
+					if (memory.removeProcess(process) && states.changeProcessState(event)) {
+						// Ok, it succeeded, but now there's nothing "running" (in the run event), so let's fix that
+						fireEvent(new Event("Ready", event.from));
+
+						// If we made it here, the event has succeeded
+						return true;
+					}
+				}
+			}
+			// For a Suspend_User->Done event
+			else if (event.from == "Suspend_User" && event.to == "Done") {
+				// Let's make sure this is all possible
+				if (states.isAddPossible(process, event.to)) {
+					// If the process is successfully removed from memory AND the process successfully changed state 
+					if (memory.removeProcess(process) && states.changeProcessState(event)) {
+						// Ok, it succeeded, but now there's nothing "running" (in the run event), so let's fix that
+						fireEvent(new Event("Ready", event.from));
+
+						// If we made it here, the event has succeeded
+						return true;
+					}
+				}
+			}
+			// For a Suspend_User->Ready event
+			else if (event.from == "Suspend_User" && event.to == "Ready") {
+				// Let's make sure this is all possible
+				if (states.isAddPossible(process, event.to)) {
+					// Let's first make sure that the Ready state isn't full
+					if (states.isStateFull(event.to)) {
+						// We need to fire an event to get the process out of the blocked state
+						fireEvent(new Event(event.to, "Hold"));
+					}
+
+					// If the process successfully changed state 
+					if (states.changeProcessState(event)) {
+						// If we made it here, the event has succeeded
+						return true;
+					}
+				}
+			}
+			// For a Suspend_System->Ready event
+			else if (event.from == "Suspend_System" && event.to == "Ready") {
+				// Let's make sure this is all possible
+				if (states.isAddPossible(process, event.to)) {
+					// Let's first make sure that the Ready state isn't full
+					if (states.isStateFull(event.to)) {
+						// We need to fire an event to get the process out of the blocked state
+						fireEvent(new Event(event.to, "Hold"));
+					}
+
+					// If the process successfully changed state 
+					if (states.changeProcessState(event)) {
+						// If we made it here, the event has succeeded
+						return true;
+					}
+				}
+			}
+			// For a Run->Done event
+			else if (event.from == "Run" && event.to == "Done") {
+				// Let's make sure this is all possible
+				if (states.isAddPossible(process, event.to)) {
+					// If the process is successfully removed from memory AND the process successfully changed state 
+					if (memory.removeProcess(process) && states.changeProcessState(event)) {
+						// Ok, it succeeded, but now there's nothing "running" (in the run event), so let's fix that
+						fireEvent(new Event("Ready", event.from));
+
+						// If we made it here, the event has succeeded
+						return true;
+					}
+				}
+			}
 			// For a Ready->Hold event, let's remove the largest process in memory
 			else if (event.from == "Ready" && event.to == "Hold") {
 				// Let's get the largest process in the "from" location
@@ -195,35 +363,6 @@ public class Simulation {
 							// If we made it here, the event has succeeded
 							return true;
 						}
-					}
-				}
-			}
-			// For a Ready->Run event
-			else if (event.from == "Ready" && event.to == "Run") {
-				// Let's make sure this is all possible
-				if (states.isAddPossible(process, event.to)) {
-					// Let's first make sure that the Ready state isn't empty
-					if (states.isStateEmpty(event.from)) {
-						// We need to fire an event to get a process in the ready state
-						// Let's see if we can grab one from Suspend_System
-						if (fireEvent(new Event("Suspend_System", "Ready")) != true) {
-							// If we couldn't grab one from Suspend_System, we should try to grab one from Hold
-							fireEvent(new Event("Hold", "Ready"));
-						}
-					}
-
-					// Let's first make sure that the Run state isn't full
-					if (states.isStateFull(event.to)) {
-						// We need to fire an event to get the process out of the run state
-						fireEvent(new Event("Run", "Suspend_System"));
-					}
-
-					// If the process successfully changed state 
-					if (states.changeProcessState(event)) {
-						// Ok, it succeeded, but a Ready->Run event can cause others, so let's check for that
-
-						// If we made it here, the event has succeeded
-						return true;
 					}
 				}
 			}
