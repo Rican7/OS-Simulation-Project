@@ -134,6 +134,11 @@ public class Simulation {
 			if (process.isDone()) {
 				// We need to fire a Run->Done event
 				fireEvent(new Event("Run", "Done"));
+
+				// Only show if debugMode is on
+				if (debugMode) {
+					System.out.println("Process finished after running");
+				}
 			}
 		}
 	}
@@ -205,6 +210,12 @@ public class Simulation {
 							// If we couldn't grab one from Suspend_System, we should try to grab one from Hold
 							fireEvent(new Event("Hold", "Ready"));
 						}
+					}
+
+					// Let's first make sure that the Run state isn't full
+					if (states.isStateFull(event.to)) {
+						// We need to fire an event to get the process out of the run state
+						fireEvent(new Event("Run", "Suspend_System"));
 					}
 
 					// If the process successfully changed state 

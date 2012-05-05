@@ -41,7 +41,7 @@ public class EventManager {
 	}
 
 	// Private function to detect if the system state is full
-	private boolean isStateFull(String state) {
+	public boolean isStateFull(String state) {
 		// Let's first see if the given state even has a limit
 		if (this.stateLimits.containsKey(state)) {
 			// Ok, the key must have a limit if it got here, so let's check to see if that limit's been reached
