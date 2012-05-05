@@ -197,6 +197,16 @@ public class Simulation {
 			else if (event.from == "Ready" && event.to == "Run") {
 				// Let's make sure this is all possible
 				if (states.isAddPossible(process, event.to)) {
+					// Let's first make sure that the Ready state isn't empty
+					if (states.isStateEmpty(event.from)) {
+						// We need to fire an event to get a process in the ready state
+						// Let's see if we can grab one from Suspend_System
+						if (fireEvent(new Event("Suspend_System", "Ready")) != true) {
+							// If we couldn't grab one from Suspend_System, we should try to grab one from Hold
+							fireEvent(new Event("Hold", "Ready"));
+						}
+					}
+
 					// If the process successfully changed state 
 					if (states.changeProcessState(event)) {
 						// Ok, it succeeded, but a Ready->Run event can cause others, so let's check for that
