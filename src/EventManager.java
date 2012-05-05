@@ -62,10 +62,21 @@ public class EventManager {
 		return false;
 	}
 
+	// Public function to detect if adding the process to the given state is possible
+	public boolean isAddPossible(Process process, String state) {
+		// Let's first check if the state we're trying to put this process in is full
+		if (this.isStateFull(state) != true) {
+			// If we got here, the process can be successfully added
+			return true;
+		}
+
+		return false;
+	}
+
 	// Public function to add processes to the event manager
 	public boolean addProcess(Process process, String initialState) {
 		// Let's first check if the state we're trying to put this process in is full
-		if (this.isStateFull(initialState) != true) {
+		if (this.isAddPossible(process, initialState)) {
 			// Let's add the process to the state map
 			if (this.systemStates.put(initialState, process)) {
 				// If we got here, the process has successfully been added to the state manager

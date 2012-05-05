@@ -41,10 +41,21 @@ public class MemoryManager {
 		return Simulation.MAX_MEMORY - this.getMemoryUsed();
 	}
 
+	// Public function to detect if adding the process to memory is possible
+	public boolean isAddPossible(Process process) {
+		// Do we have enough free memory available for this process?
+		if (process.getSize() <= this.getMemoryAvailable()) {
+			// If we got here, the process can possibly be added
+			return true;
+		}
+
+		return false;
+	}
+
 	// Public function to add processes to the Memory manager
 	public boolean addProcess(Process process) {
 		// Do we have enough free memory available for this process?
-		if (process.getSize() <= this.getMemoryAvailable()) {
+		if (this.isAddPossible(process)) {
 			// Let's add the process to memory
 			if (this.systemMemory.add(process)) {
 				// If we got here, the process has successfully been added to memory
@@ -52,7 +63,6 @@ public class MemoryManager {
 			}
 		}
 
-		// Let's return true for now. Nothing can possibly fail.
 		return false;
 	}
 
@@ -67,6 +77,7 @@ public class MemoryManager {
 		int index = this.systemMemory.indexOf(process);
 			// Only show if debugMode is on
 			if (Simulation.debugMode) {
+				System.out.println(this.systemMemory.contains(process));
 				System.out.println(index);
 			}
 
