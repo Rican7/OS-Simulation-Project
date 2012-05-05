@@ -36,7 +36,8 @@ public class Simulation {
 	private static MemoryManager memory;
 	private static List<Event> events;
 	private static boolean systemRunning;
-	private static int totalEventCount;
+	private static int generatedEventCount;
+	private static int firedEventCount;
 
 	// Constructor
 	private static void run() {
@@ -139,6 +140,12 @@ public class Simulation {
 				if (debugMode) {
 					System.out.println("Process finished after running");
 				}
+			}
+		}
+		else {
+			// Only show if debugMode is on
+			if (debugMode) {
+				System.out.println("WARNING!! No process to run");
 			}
 		}
 	}
@@ -378,6 +385,9 @@ public class Simulation {
 				}
 			}
 		}
+
+		// Increment the fired event counter
+		firedEventCount++;
 		
 		return false;
 	}
@@ -385,11 +395,14 @@ public class Simulation {
 	// Private function to check if the system has finished its job
 	private static boolean checkFinished() {
 		// If the total number of generated events has hit 500
-		if (totalEventCount == MAX_EVENTS) {
+		if (generatedEventCount == MAX_EVENTS) {
 			// Only show if debugMode is on
 			if (debugMode) {
 				System.out.println("STOPPING! The maximum number of events: " + MAX_EVENTS + " have been generated. We're not getting anywhere.");
 			}
+
+			// Let's print out the state table
+			outputStateTable();
 
 			return true;
 		}
@@ -398,14 +411,66 @@ public class Simulation {
 		if (TOTAL_NUM_JOBS == states.getProcessCount("Done")) {
 			// Only show if debugMode is on
 			if (debugMode) {
-				System.out.println("STOPPING! The OS is \"finished\". Every process is in the \"Done\" state.");
+				System.out.println("\r\n\r\nSTOPPING! The OS is \"finished\". Every process is in the \"Done\" state.");
+				System.out.println("Finished by generating " + generatedEventCount + " events and successfully firing " + firedEventCount + " events.");
 			}
+
+			// Let's print out the state table
+			outputStateTable();
 
 			return true;
 		}
 
 		// If it got here, the system hasn't finished yet
 		return false;
+	}
+
+	// TODO: Finish this
+	// Private function to output the event manager's state table
+	private static void outputStateTable() {
+		// Let's create a couple of new lines
+		System.out.println("\r\n");
+
+		// Let's create our header
+		for (String state : STATE_NAMES) {
+			// skip the other suspend, so we can just merge them later
+			if (state != "Suspend_System" && state != "Suspend_User") {
+				System.out.print(state + "\t");
+			}
+			else if (state == "Suspend_System") {
+				System.out.print("Suspend_S\t\t");
+			}
+			else if (state == "Suspend_User") {
+				System.out.print("Suspend_U\t\t");
+			}
+		}
+
+		// Let's create a couple of new lines
+		System.out.println("\r\n");
+
+		// Let's create our body, now
+		// Let's create as many rows as their are the most amount of processes in one state
+		for (int i = 0; i < states.getMostFilledStateCount(); i++) {
+			// Loop through each state name
+			for (String state : STATE_NAMES) {
+				// Let's create a process
+				Process process = null;
+
+				// Let's get the process
+				process = states.getProcessAtIndex(state, i);
+
+				// We could get back a null process
+				if (process != null) {
+					System.out.print(process.toString() + "\t");
+				}
+				else {
+					System.out.print("\t\t");
+				}
+			}
+
+			// Let's create a couple of new lines
+			System.out.println();
+		}
 	}
 
 	// Private function to actually start the system
@@ -422,7 +487,7 @@ public class Simulation {
 			Event generatedEvent = generateRandomEvent();
 
 			// Let's increment the total number of events that have been generated
-			totalEventCount++;
+			generatedEventCount++;
 
 			// Let's actually fire the event that's been generated
 			boolean eventSucceeded = fireEvent(generatedEvent);
