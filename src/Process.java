@@ -4,8 +4,8 @@ public class Process implements Comparable<Process> {
 	private static final int MIN_SIZE = 256; // Lowest possible memory size for a process
 	private static final int MAX_SIZE = 1024; // Highest possible memory size for a process
 	private static final int SIZE_STEPPING = 64; // Memory stepping
-	private static final int MIN_TIME = 3; // Lowest possible cpu time
-	private static final int MAX_TIME = 15; // Highest possible cpu time
+	private static final int MIN_REQ_TIME = 3; // Lowest possible cpu time
+	private static final int MAX_REQ_TIME = 15; // Highest possible cpu time
 	private static final int TIME_STEPPING = 3; // CPU time stepping
 
 	// Declare static (global) variables
@@ -14,7 +14,8 @@ public class Process implements Comparable<Process> {
 	// Declare properties
 	private int identifier;
 	private int size;
-	private int cpuTime;
+	private int cpuReqTime;
+	private int cpuUsedTime;
 
 	// Constructor
 	public Process(int setSize, int setTime) {
@@ -23,7 +24,7 @@ public class Process implements Comparable<Process> {
 
 		// Set the instances properties
 		this.size = setSize;
-		this.cpuTime = setTime;
+		this.cpuReqTime = setTime;
 
 		// Increment the numOfProcesses
 		numOfProcesses++;
@@ -59,17 +60,17 @@ public class Process implements Comparable<Process> {
 	}
 
 	// Private function to generate a process's required cpu time with these limitations:
-	// Must be an int between MIN_TIME and MAX_TIME
+	// Must be an int between MIN_REQ_TIME and MAX_REQ_TIME
 	// Int must be randomly generated in steps of TIME_STEPPING
 	private static int generateTime() {
 		// Create the random number's maximum range
-		int randMax = ( MAX_TIME / TIME_STEPPING ) - ( MIN_TIME / TIME_STEPPING ) + 1;
+		int randMax = ( MAX_REQ_TIME / TIME_STEPPING ) - ( MIN_REQ_TIME / TIME_STEPPING ) + 1;
 
 		// Generate a random int within the constraints
 		int n = Simulation.random.nextInt( randMax );
 
 		// Use a y-intercept style function of n to calculate the int within its constraints
-		int time = ( TIME_STEPPING * n ) + MIN_TIME;
+		int time = ( TIME_STEPPING * n ) + MIN_REQ_TIME;
 
 		// Return the calculated time. :)
 		return time;
@@ -85,9 +86,19 @@ public class Process implements Comparable<Process> {
 		return this.size;
 	}
 
-	// Public function to get the process's cpu time
-	public int getTime() {
-		return this.cpuTime;
+	// Public function to get the process's required cpu time
+	public int getReqTime() {
+		return this.cpuReqTime;
+	}
+
+	// Public function to get the process's used cpu time
+	public int getUsedTime() {
+		return this.cpuUsedTime;
+	}
+
+	// Public function for the process to "use cpu time"
+	public void useTime(int time) {
+		this.cpuUsedTime += time;
 	}
 
 	// Private function compareTo, implementing the Comparable interface
@@ -106,7 +117,7 @@ public class Process implements Comparable<Process> {
 	// Public function to convert the Process into a string
 	public String toString() {
 		// Create a string from the object's properties
-		String string = "Process #" + this.getId() + "/" + this.getSize() + "k/" + this.getTime() + "t";
+		String string = "Process #" + this.getId() + "/" + this.getSize() + "k/" + this.getReqTime() + "t";
 
 		return string;
 	}
