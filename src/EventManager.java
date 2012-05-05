@@ -3,6 +3,7 @@ import java.util.Map;
 import java.util.List;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Set;
 
 // External imports
 import com.google.common.collect.*;
@@ -124,8 +125,8 @@ public class EventManager {
 		return this.systemStates.get(state);
 	}
 
-	// Public function to get the first process from the given state
-	@Nullable public Process getProcess(String state) {
+	// Public function to get a process at a specific given index in a given state
+	@Nullable public Process getProcessAtIndex(String state, int index) {
 		// Let's create a process to be returned
 		Process process = null; // Process may be null. We may not get back a process
 
@@ -135,10 +136,15 @@ public class EventManager {
 		// Let's make sure the list of processes in that state aren't empty
 		if (processes.isEmpty() != true) {
 			// Return the first process in the list (at key/index 0)
-			process = processes.get(0);
+			process = processes.get(index);
 		}
 
 		return process;
+	}
+
+	// Public function to get the first process from the given state
+	@Nullable public Process getProcess(String state) {
+		return this.getProcessAtIndex(state, 0);
 	}
 
 	// Public function to get the single largest process in a given state's memory
@@ -200,5 +206,29 @@ public class EventManager {
 
 		// If it got here, it didn't succeed
 		return false;
+	}
+
+	// Public function to get a count of the largest filled (most amount of processes) state in the event manager
+	public int getMostFilledStateCount() {
+		// Let's keep count
+		int mostProcesses = 0;
+
+		// Let's get all of the keys in the map
+		Set<String> keys = this.systemStates.keySet();
+
+		// Loop through each key
+		for (String state : keys) {
+			// Let's get the number of processes in that state
+			int i = this.getProcessCount(state);
+			
+			// If its larger than our current max
+			if (i > mostProcesses) {
+				// Set the value
+				mostProcesses = i;
+			}
+		}
+
+		// When we're done, let's return the value
+		return mostProcesses;
 	}
 }
