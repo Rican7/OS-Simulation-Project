@@ -359,7 +359,7 @@ public class Simulation {
 					// Let's make sure this is all possible
 					if (states.isAddPossible(process, event.to)) {
 						// If the process is successfully removed from memory AND the process successfully changed state 
-						if (memory.removeProcess(largestReadyProcess) && states.changeProcessState(event)) {
+						if (memory.removeProcess(largestReadyProcess) && states.changeProcessStateToHold(largestReadyProcess, event.from)) {
 							// If we made it here, the event has succeeded
 							return true;
 						}

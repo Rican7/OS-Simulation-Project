@@ -188,4 +188,17 @@ public class EventManager {
 		// If it got here, it didn't succeed
 		return false;
 	}
+
+	// Public function to change the state of a given process to Hold from a given state
+	public boolean changeProcessStateToHold(Process process, String fromState) {
+		// Let's remove the process from the original state
+		// AND Let's now add the process to the Hold state
+		if (this.removeProcessFromState(process, fromState) && this.addProcess(process, "Hold")) {
+			// If we made it here, everything worked
+			return true;
+		}
+
+		// If it got here, it didn't succeed
+		return false;
+	}
 }
