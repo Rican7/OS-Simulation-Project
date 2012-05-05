@@ -101,6 +101,18 @@ public class Process implements Comparable<Process> {
 		this.cpuUsedTime += time;
 	}
 
+	// Public function to check if the process is "DONE" ()
+	public boolean isDone() {
+		// If its used time has reached its required time
+		if (this.cpuUsedTime == this.cpuReqTime) {
+			// If it got here, It must be done
+			return true;
+		}
+
+		// If it got here, it must not be done
+		return false;
+	}
+
 	// Private function compareTo, implementing the Comparable interface
 	public int compareTo(Process process) {
 		if (this.getSize() < process.getSize()) {

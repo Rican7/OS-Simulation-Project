@@ -18,12 +18,14 @@ public class Simulation {
 	public static final int MAX_MEMORY = 2048; // Total available user memory
 	public static final int MAX_EVENTS = 500; // Maximum number of events to be fired before quitting
 
-	private static final String[] STATE_NAMES = {"Hold", "Ready", "Run", "Suspend", "Blocked", "Done"}; // The names of each possible state
+	private static final String[] STATE_NAMES = {"Hold", "Ready", "Run", "Suspend_System", "Suspend_User", "Blocked", "Done"}; // The names of each possible state
 
-	private static final int[] INITIAL_JOB_STATES = {1, 3, 4}; // The initially active job states (correspond with the state names key/index)
+	private static final int[] INITIAL_JOB_STATES = {1, 3, 5}; // The initially active job states (correspond with the state names key/index)
 	private static final int INITIAL_JOB_SIZE = 320; // The amount of memory that each initial ACTIVE job has
 	private static final int INITIAL_JOB_TIME = 6; // The CPU time requirement of each initially ACTIVE job
 	private static final int INITIAL_NUM_HELD = 10; // The number of initially inactive/held jobs
+
+	private static final int PROCESS_RUN_TIME = 3; // The number of "CPU Time Units" that the currently running process uses on each event cycle
 
 	// Program wide objects
 	public static Random random;
@@ -66,7 +68,7 @@ public class Simulation {
 
 			// Only show if debugMode is on
 			if (debugMode) {
-				System.out.println("Process created at state: \"" + STATE_NAMES[state] + "\" with ID: " + job.getId() + ", Size: " + job.getSize() + "k, and Time: " + job.getTime());
+				System.out.println("Process created at state: \"" + STATE_NAMES[state] + "\" with ID: " + job.getId() + ", Size: " + job.getSize() + "k, and Time: " + job.getReqTime());
 			}
 
 			// Add the process to the system's memory
@@ -88,7 +90,7 @@ public class Simulation {
 
 			// Only show if debugMode is on
 			if (debugMode) {
-				System.out.println("Process created at state: \"Hold\" with ID: " + job.getId() + ", Size: " + job.getSize() + "k, and Time: " + job.getTime());
+				System.out.println("Process created at state: \"Hold\" with ID: " + job.getId() + ", Size: " + job.getSize() + "k, and Time: " + job.getReqTime());
 			}
 		}
 	}
@@ -103,14 +105,37 @@ public class Simulation {
 		events.add(new Event("Ready", "Run"));
 		events.add(new Event("Run", "Blocked"));
 		events.add(new Event("Blocked", "Ready"));
-		events.add(new Event("Run", "Suspend")); // User
-		events.add(new Event("Run", "Suspend")); // Timer/System
+		events.add(new Event("Run", "Suspend_User")); // User
+		events.add(new Event("Run", "Suspend_System")); // Timer/System
 		events.add(new Event("Blocked", "Done")); // System killed
 		events.add(new Event("Suspend", "Done")); // User killed
-		events.add(new Event("Suspend", "Ready")); // User
-		events.add(new Event("Suspend", "Ready")); // Timer/System
+		events.add(new Event("Suspend_User", "Ready")); // User
+		events.add(new Event("Suspend_System", "Ready")); // Timer/System
 		events.add(new Event("Run", "Done"));
 		events.add(new Event("Ready", "Hold"));
+	}
+
+	// Private function to run the process that is currently granted the CPU
+	private static void runProcess() {
+		// Let's get the process in the Run state
+		Process process = states.getProcess("Run"); // May be null
+
+		// If we actually got back a process
+		if (process != null) {
+			// Only show if debugMode is on
+			if (debugMode) {
+				System.out.println("Running process: " + process.toString());
+			}
+
+			// Let's run the process for a set "time"
+			process.useTime(PROCESS_RUN_TIME);
+
+			// If the process is "DONE" (its used time has reached its required time)
+			if (process.isDone()) {
+				// We need to fire a Run->Done event
+				fireEvent(new Event("Run", "Done"));
+			}
+		}
 	}
 
 	// Private function to generate a random event from the events list
@@ -137,7 +162,7 @@ public class Simulation {
 		if (process != null) {
 			// Only show if debugMode is on
 			if (debugMode) {
-				System.out.println(process.toString());
+				System.out.println("Event " + event.toString() + " firing on process: " + process.toString());
 			}
 
 			// For a hold->ready event, let's make sure the system has enough memory to hold the new process
@@ -168,6 +193,19 @@ public class Simulation {
 							// If we made it here, the event has succeeded
 							return true;
 						}
+					}
+				}
+			}
+			// For a Ready->Run event
+			else if (event.from == "Ready" && event.to == "Run") {
+				// Let's make sure this is all possible
+				if (states.isAddPossible(process, event.to)) {
+					// If the process is successfully added to memory AND the process successfully changed state 
+					if (states.changeProcessState(event)) {
+						// Ok, it succeeded, but a Ready->Run event can cause others, so let's check for that
+
+						// If we made it here, the event has succeeded
+						return true;
 					}
 				}
 			}
@@ -208,16 +246,14 @@ public class Simulation {
 
 		// While the system is still running
 		while (systemRunning) {
+			// First, let's run our process
+			runProcess();
+
 			// Let's generate a random event
 			Event generatedEvent = generateRandomEvent();
 
 			// Let's increment the total number of events that have been generated
 			totalEventCount++;
-
-			// Only show if debugMode is on
-			if (debugMode) {
-				System.out.println(generatedEvent.toString());
-			}
 
 			// Let's actually fire the event that's been generated
 			boolean eventSucceeded = fireEvent(generatedEvent);
