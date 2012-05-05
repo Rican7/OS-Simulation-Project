@@ -48,11 +48,8 @@ public class EventManager {
 			// Get the states limit
 			int stateLimit = this.stateLimits.get(state);
 
-			// Let's grab a list of all of the current processes in the given state
-			List<Process> processes = this.getProcesses(state);
-
 			// Get a count of the number of times a key appears in that set
-			int stateProcessCount = processes.size();
+			int stateProcessCount = this.getProcessCount(state);
 
 			// If the number of processes in that state are at the limit
 			if (stateProcessCount == stateLimit) {
@@ -159,6 +156,15 @@ public class EventManager {
 		}
 
 		return process;
+	}
+
+	// Public function to get the number of processes in a given state
+	public int getProcessCount(String state) {
+		// Let's grab a list of all of the current processes in the given state
+		List<Process> processes = this.getProcesses(state);
+
+		// Return the lists size
+		return processes.size();
 	}
 
 	// Public function to change the state of a process given the Event
