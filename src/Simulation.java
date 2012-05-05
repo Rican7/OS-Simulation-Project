@@ -178,14 +178,11 @@ public class Simulation {
 			}
 			// For a Ready->Hold event, let's remove the largest process in memory
 			else if (event.from == "Ready" && event.to == "Hold") {
-				// Let's grab a list of all of the current processes in the Ready state
-				List<Process> readyProcesses = states.getProcesses(event.from);
+				// Let's get the largest process in the "from" location
+				Process largestReadyProcess = states.getLargestProcess(event.from); // May be null
 
-				// Let's make sure there ARE ready processes
-				if (readyProcesses.isEmpty() != true) {
-					// Let's get the largest process in that list
-					Process largestReadyProcess = Collections.max(readyProcesses);
-
+				// If we actually got back a process
+				if (largestReadyProcess != null) {
 					// Let's make sure this is all possible
 					if (states.isAddPossible(process, event.to)) {
 						// If the process is successfully removed from memory AND the process successfully changed state 
@@ -200,7 +197,7 @@ public class Simulation {
 			else if (event.from == "Ready" && event.to == "Run") {
 				// Let's make sure this is all possible
 				if (states.isAddPossible(process, event.to)) {
-					// If the process is successfully added to memory AND the process successfully changed state 
+					// If the process successfully changed state 
 					if (states.changeProcessState(event)) {
 						// Ok, it succeeded, but a Ready->Run event can cause others, so let's check for that
 
@@ -209,6 +206,7 @@ public class Simulation {
 					}
 				}
 			}
+			// All other events
 			else {
 				// Let's make sure this is all possible
 				if (states.isAddPossible(process, event.to)) {
@@ -238,9 +236,6 @@ public class Simulation {
 
 	// Private function to actually start the system
 	private static void startSystem() {
-		// Let's keep track of some variables
-		int currentCpuTime = 0; // The current amount of CPU time that the process in "Run" has used
-
 		// Mark the system as running
 		systemRunning = true;
 
