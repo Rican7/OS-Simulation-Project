@@ -135,8 +135,16 @@ public class EventManager {
 
 		// Let's make sure the list of processes in that state aren't empty
 		if (processes.isEmpty() != true) {
-			// Return the first process in the list (at key/index 0)
-			process = processes.get(index);
+			try {
+				// Return the first process in the list (at key/index 0)
+				process = processes.get(index);
+			}
+			catch (IndexOutOfBoundsException exception) {
+				// Only show if debugMode is on
+				if (Simulation.debugMode) {
+					System.out.println("Error getting process from the event manager at: State " + state + " and index " + index + ". With exception: " + exception);
+				}
+			}
 		}
 
 		return process;
