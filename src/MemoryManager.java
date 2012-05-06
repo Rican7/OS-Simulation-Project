@@ -82,7 +82,7 @@ public class MemoryManager {
 
 			// Only show if debugMode is on
 			if (Simulation.debugMode) {
-				System.out.println(process.toString() + " removed from memory");
+				System.out.println("Process " + process.toString() + " removed from memory");
 			}
 
 			// If it worked, return true

@@ -129,7 +129,7 @@ public class Process implements Comparable<Process> {
 	// Public function to convert the Process into a string
 	public String toString() {
 		// Create a string from the object's properties
-		String string = "Process #" + this.getId() + "/" + this.getSize() + "k/" + this.getReqTime() + "t";
+		String string = "#" + this.getId() + "/" + this.getSize() + "k/" + this.getReqTime() + "t";
 
 		return string;
 	}
