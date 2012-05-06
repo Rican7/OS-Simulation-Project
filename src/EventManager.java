@@ -134,7 +134,9 @@ public class EventManager {
 		List<Process> processes = this.getProcesses(state);
 
 		// Let's make sure the list of processes in that state aren't empty
-		if (processes.isEmpty() != true) {
+		// Also, let's make sure the index we're trying to query isn't out of bounds
+		if (processes.isEmpty() != true && this.getProcessCount(state) > index) {
+			// Just in case it is out of bounds, let's catch the error
 			try {
 				// Return the first process in the list (at key/index 0)
 				process = processes.get(index);
