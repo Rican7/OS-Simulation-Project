@@ -95,6 +95,11 @@ public class Simulation {
 				System.out.println("Process created at state: \"Hold\" with ID: " + job.getId() + ", Size: " + job.getSize() + "k, and Time: " + job.getReqTime());
 			}
 		}
+
+		// Only show if debugMode is on
+		if (debugMode) {
+			outputStateTable();
+		}
 	}
 
 	// Private function to build the event list
@@ -110,7 +115,7 @@ public class Simulation {
 		events.add(new Event("Run", "Suspend_User")); // User
 		events.add(new Event("Run", "Suspend_System")); // Timer/System
 		events.add(new Event("Blocked", "Done")); // System killed
-		events.add(new Event("Suspend", "Done")); // User killed
+		events.add(new Event("Suspend_User", "Done")); // User killed
 		events.add(new Event("Suspend_User", "Ready")); // User
 		events.add(new Event("Suspend_System", "Ready")); // Timer/System
 		events.add(new Event("Run", "Done"));
@@ -147,7 +152,12 @@ public class Simulation {
 			// Only show if debugMode is on
 			if (debugMode) {
 				System.out.println("WARNING!! No process to run");
+				System.out.println("Trying to load a process");
 			}
+
+			// We REALLY shouldn't let the OS just sit dormant for the user, so
+			// Let's fire a Ready->Run event
+			fireEvent(new Event("Ready", "Run"));
 		}
 	}
 
@@ -172,10 +182,14 @@ public class Simulation {
 		Process process = states.getProcess(event.from); // May be null
 
 		// If we actually got back a process
-		if (process != null) {
+		// Let's make sure its not a Ready->Run... because that may need to bring in a process (so the process would be null right now)
+		if (process != null || (event.from == "Ready" && event.to == "Run")) {
 			// Only show if debugMode is on
-			if (debugMode) {
+			if (debugMode && process != null) {
 				System.out.println("Event " + event.toString() + " firing on process: " + process.toString());
+			}
+			else if (debugMode && (event.from == "Ready" && event.to == "Run")) {
+				System.out.println("Event " + event.toString() + " firing");
 			}
 
 			// For a hold->ready event, let's make sure the system has enough memory to hold the new process
@@ -191,6 +205,12 @@ public class Simulation {
 			}
 			// For a Ready->Run event
 			else if (event.from == "Ready" && event.to == "Run") {
+				// Let's first make sure that the Run state isn't full
+				if (states.isStateFull(event.to)) {
+					// We need to fire an event to get the process out of the run state
+					fireEvent(new Event(event.to, "Suspend_System"));
+				}
+
 				// Let's make sure this is all possible
 				if (states.isAddPossible(process, event.to)) {
 					// Let's first make sure that the Ready state isn't empty
@@ -203,14 +223,13 @@ public class Simulation {
 						}
 					}
 
-					// Let's first make sure that the Run state isn't full
-					if (states.isStateFull(event.to)) {
-						// We need to fire an event to get the process out of the run state
-						fireEvent(new Event(event.to, "Suspend_System"));
-					}
-
 					// If the process successfully changed state 
 					if (states.changeProcessState(event)) {
+						// Only show if debugMode is on
+						if (debugMode) {
+							System.out.println("Event " + event.toString() + " worked!");
+						}
+
 						// If we made it here, the event has succeeded
 						return true;
 					}
@@ -218,14 +237,14 @@ public class Simulation {
 			}
 			// For a Run->Blocked event
 			else if (event.from == "Run" && event.to == "Blocked") {
+				// Let's first make sure that the Blocked state isn't full
+				if (states.isStateFull(event.to)) {
+					// We need to fire an event to get the process out of the blocked state
+					fireEvent(new Event(event.to, "Done"));
+				}
+
 				// Let's make sure this is all possible
 				if (states.isAddPossible(process, event.to)) {
-					// Let's first make sure that the Blocked state isn't full
-					if (states.isStateFull(event.to)) {
-						// We need to fire an event to get the process out of the blocked state
-						fireEvent(new Event(event.to, "Done"));
-					}
-
 					// If the process successfully changed state 
 					if (states.changeProcessState(event)) {
 						// Ok, it succeeded, but now there's nothing "running" (in the run event), so let's fix that
@@ -238,14 +257,14 @@ public class Simulation {
 			}
 			// For a Blocked->Ready event
 			else if (event.from == "Blocked" && event.to == "Ready") {
+				// Let's first make sure that the Ready state isn't full
+				if (states.isStateFull(event.to)) {
+					// We need to fire an event to get the process out of the blocked state
+					fireEvent(new Event(event.to, "Hold"));
+				}
+
 				// Let's make sure this is all possible
 				if (states.isAddPossible(process, event.to)) {
-					// Let's first make sure that the Ready state isn't full
-					if (states.isStateFull(event.to)) {
-						// We need to fire an event to get the process out of the blocked state
-						fireEvent(new Event(event.to, "Hold"));
-					}
-
 					// If the process successfully changed state 
 					if (states.changeProcessState(event)) {
 						// If we made it here, the event has succeeded
@@ -311,14 +330,14 @@ public class Simulation {
 			}
 			// For a Suspend_User->Ready event
 			else if (event.from == "Suspend_User" && event.to == "Ready") {
+				// Let's first make sure that the Ready state isn't full
+				if (states.isStateFull(event.to)) {
+					// We need to fire an event to get the process out of the blocked state
+					fireEvent(new Event(event.to, "Hold"));
+				}
+
 				// Let's make sure this is all possible
 				if (states.isAddPossible(process, event.to)) {
-					// Let's first make sure that the Ready state isn't full
-					if (states.isStateFull(event.to)) {
-						// We need to fire an event to get the process out of the blocked state
-						fireEvent(new Event(event.to, "Hold"));
-					}
-
 					// If the process successfully changed state 
 					if (states.changeProcessState(event)) {
 						// If we made it here, the event has succeeded
@@ -328,14 +347,14 @@ public class Simulation {
 			}
 			// For a Suspend_System->Ready event
 			else if (event.from == "Suspend_System" && event.to == "Ready") {
+				// Let's first make sure that the Ready state isn't full
+				if (states.isStateFull(event.to)) {
+					// We need to fire an event to get the process out of the blocked state
+					fireEvent(new Event(event.to, "Hold"));
+				}
+
 				// Let's make sure this is all possible
 				if (states.isAddPossible(process, event.to)) {
-					// Let's first make sure that the Ready state isn't full
-					if (states.isStateFull(event.to)) {
-						// We need to fire an event to get the process out of the blocked state
-						fireEvent(new Event(event.to, "Hold"));
-					}
-
 					// If the process successfully changed state 
 					if (states.changeProcessState(event)) {
 						// If we made it here, the event has succeeded
@@ -426,7 +445,6 @@ public class Simulation {
 		return false;
 	}
 
-	// TODO: Finish this
 	// Private function to output the event manager's state table
 	private static void outputStateTable() {
 		// Let's set our column padding
@@ -485,6 +503,9 @@ public class Simulation {
 			// Let's create a couple of new lines
 			System.out.println();
 		}
+
+		// Finally, to finish, let's create a couple of new lines
+		System.out.println("\r\n");
 	}
 
 	// Private function to actually start the system
@@ -505,9 +526,18 @@ public class Simulation {
 
 			// Let's actually fire the event that's been generated
 			boolean eventSucceeded = fireEvent(generatedEvent);
+			
+			// Only show if debugMode is on
+			if (debugMode) {
+				System.out.println("GENERATED Event " + generatedEvent.toString() + " firing");
+			}
 
 			// If the event succeeded
 			if (eventSucceeded) {
+				// Only show if debugMode is on
+				if (debugMode) {
+					System.out.println("Event succeeded: " + generatedEvent.toString());
+				}
 			}
 			else {
 				// Only show if debugMode is on
@@ -519,6 +549,10 @@ public class Simulation {
 			// Let's check to see if the system has finished its job
 			if (checkFinished()) {
 				systemRunning = false;
+			}
+			// Every 25 generated events, we should output the state table
+			else if ((generatedEventCount % 25) == 0) {
+				outputStateTable();
 			}
 		}
 	}
