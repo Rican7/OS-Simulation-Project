@@ -10,6 +10,7 @@ import java.util.Random;
 
 // External imports
 import com.google.common.collect.*;
+import org.apache.commons.lang3.StringUtils;
 
 // Simulation main engine class
 public class Simulation {
@@ -428,6 +429,9 @@ public class Simulation {
 	// TODO: Finish this
 	// Private function to output the event manager's state table
 	private static void outputStateTable() {
+		// Let's set our column padding
+		int colPadding = 14;
+
 		// Let's create a couple of new lines
 		System.out.println("\r\n");
 
@@ -435,13 +439,19 @@ public class Simulation {
 		for (String state : STATE_NAMES) {
 			// skip the other suspend, so we can just merge them later
 			if (state != "Suspend_System" && state != "Suspend_User") {
-				System.out.print(state + "\t");
+				// Let's create a string that's padded and centered
+				String string = StringUtils.center(state, colPadding);
+				System.out.print(string);
 			}
 			else if (state == "Suspend_System") {
-				System.out.print("Suspend_S\t\t");
+				// Let's create a string that's padded and centered
+				String string = StringUtils.center("Suspend_S", colPadding);
+				System.out.print(string);
 			}
 			else if (state == "Suspend_User") {
-				System.out.print("Suspend_U\t\t");
+				// Let's create a string that's padded and centered
+				String string = StringUtils.center("Suspend_U", colPadding);
+				System.out.print(string);
 			}
 		}
 
@@ -461,10 +471,14 @@ public class Simulation {
 
 				// We could get back a null process
 				if (process != null) {
-					System.out.print(process.toString() + "\t");
+					// Let's create a string that's padded and centered
+					String string = StringUtils.center(process.toString(), colPadding);
+					System.out.print(string);
 				}
 				else {
-					System.out.print("\t\t");
+					// Let's create a string that's padded and centered
+					String string = StringUtils.center("", colPadding);
+					System.out.print(string);
 				}
 			}
 
