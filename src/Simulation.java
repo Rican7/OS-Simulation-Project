@@ -1,7 +1,11 @@
-/********************************/
-// Operating Systems Simulation //
-//   Created by Trevor Suarez   //
-/********************************/
+/******************************************/
+//      Operating Systems Simulation      //
+//                                        //
+//        Created by Trevor Suarez        //
+// Project Designed by Dr. Roger Marshall //
+//                                        //
+//     Plymouth State University 2012     //
+/******************************************/
 
 // Imports (libraries and utilities)
 import java.util.List;
@@ -15,6 +19,9 @@ import org.apache.commons.lang3.StringUtils;
 // Simulation main engine class
 public class Simulation {
 	// Declare final variables (constants)
+	public static final int VERSION_MAJOR_NUMBER = 1; // The version number
+	public static final int VERSION_MINOR_NUMBER = 1; // The version number
+
 	public static final int MAX_MEMORY = 2048; // Total available user memory
 	public static final int MAX_EVENTS = 500; // Maximum number of events to be fired before quitting
 
@@ -33,6 +40,9 @@ public class Simulation {
 
 	// Class wide objects
 	public static boolean debugMode;
+	private static boolean seeFinishConditions;
+	private static boolean helpMode;
+	private static boolean versionMode;
 	private static EventManager states;
 	private static MemoryManager memory;
 	private static List<Event> events;
@@ -416,27 +426,27 @@ public class Simulation {
 	private static boolean checkFinished() {
 		// If the total number of generated events has hit 500
 		if (generatedEventCount == MAX_EVENTS) {
-			// Only show if debugMode is on
-			if (debugMode) {
-				System.out.println("STOPPING! The maximum number of events: " + MAX_EVENTS + " have been generated. We're not getting anywhere.");
-			}
-
 			// Let's print out the state table
 			outputStateTable();
+
+			// Only show if debugMode is on
+			if (debugMode || seeFinishConditions) {
+				System.out.println("STOPPING! The maximum number of events: " + MAX_EVENTS + " have been generated. We're not getting anywhere.");
+			}
 
 			return true;
 		}
 
 		// If every job is in the "Done" state
 		if (TOTAL_NUM_JOBS == states.getProcessCount("Done")) {
-			// Only show if debugMode is on
-			if (debugMode) {
-				System.out.println("\r\n\r\nSTOPPING! The OS is \"finished\". Every process is in the \"Done\" state.");
-				System.out.println("Finished by generating " + generatedEventCount + " events and successfully firing " + firedEventCount + " events.");
-			}
-
 			// Let's print out the state table
 			outputStateTable();
+
+			// Only show if debugMode is on
+			if (debugMode || seeFinishConditions) {
+				System.out.println("STOPPING! The OS is \"finished\". Every process is in the \"Done\" state.");
+				System.out.println("Finished by generating " + generatedEventCount + " events and successfully firing " + firedEventCount + " events.");
+			}
 
 			return true;
 		}
@@ -557,21 +567,112 @@ public class Simulation {
 		}
 	}
 
+	// Private function to print the help psuedo-manual to the screen
+	private static void printHelp() {
+		// Let's first print the usage
+		String usage = "Usage: ossim [OPTION]";
+		System.out.println(usage);
+
+		// Now let's print the summary of the program
+		String summary = "Program to simulate a typical operating system's event driven state model.";
+		summary += "\r\nThe program starts with processes in an initial state and runs random events until they are all \"done\"";
+		System.out.println(summary + "\r\n");
+
+		// Optional parameters/arguments
+
+		// Debug
+		String shortCode = "-d";
+		String longCode = "--debug";
+		String description = "Enable a very verbose debug-style output";
+		System.out.format("%4s, %-14s%-40s\r\n", shortCode, longCode, description);
+
+		// Debug
+		shortCode = "-f";
+		longCode = "--seefinish";
+		description = "See the finishing condition output. Automatically enabled with debug mode enabled.";
+		System.out.format("%4s, %-14s%-40s\r\n", shortCode, longCode, description);
+
+		// Help
+		shortCode = "";
+		longCode = "--help";
+		description = "Display this help and exit";
+		System.out.format("%4s  %-14s%-40s\r\n", shortCode, longCode, description);
+
+		// Version
+		shortCode = "";
+		longCode = "--version";
+		description = "Output version information and exit";
+		System.out.format("%4s  %-14s%-40s\r\n", shortCode, longCode, description);
+	}
+
+	// Private function to print the version information to the screen
+	private static void printVersion() {
+		// Let's decide the line width (padding)
+		int lineWidth = 62;
+
+		// Let's print out the version number
+		String versionNum = StringUtils.center("OSSIM - Operating Systems Simulation Project - Version " + VERSION_MAJOR_NUMBER + "." + VERSION_MINOR_NUMBER, lineWidth);
+		System.out.println(versionNum + "\r\n");
+
+		// Now let's print out the creator's information
+		String createdBy = StringUtils.center("Created by Trevor Suarez", lineWidth);
+		System.out.println(createdBy);
+
+		// Now let's print out the designer's information
+		String designedBy = StringUtils.center("Project designed by Dr. Roger Marshall", lineWidth);
+		System.out.println(designedBy + "\r\n");
+
+		// Finally, let's print out the organization information
+		String organization = StringUtils.center("Plymouth State University 2012", lineWidth);
+		System.out.println(organization + "\r\n");
+	}
+
+	// Private function to check the passed arguments
+	private static void checkArguments(String[] args) {
+		// Let's get all the arguments as an array
+		List<String> arguments = Arrays.asList(args);
+		
+		// If debug has been passed, lets enable it
+		if (arguments.contains("--debug") || arguments.contains("-d")) {
+			debugMode = true;
+		}
+
+		// If seefinish has been passed, lets enable it
+		if (arguments.contains("--seefinish") || arguments.contains("-f")) {
+			seeFinishConditions = true;
+		}
+
+		// If help has been passed, lets enable it
+		if (arguments.contains("--help")) {
+			helpMode = true;
+		}
+
+		// If version has been passed, lets enable it
+		if (arguments.contains("--version")) {
+			versionMode = true;
+		}
+		
+	}
+
 	// Main function
 	public static void main(String[] args) {
 		// Instanciate program wide objects
 		random = new Random();
 
-		// Let's get all the arguments as an array
-		List<String> arguments = Arrays.asList(args);
-		
-		// If debug mode has been passed, lets enable it
-		if (arguments.contains("debug")) {
-			debugMode = true;
-		}
+		// Let's check for arguments
+		checkArguments(args);
 
-		// Begin the simulation
-		run();
+		// If help mode hasn't been enabled, actually run the system
+		if (!helpMode && !versionMode) {
+			// Begin the simulation
+			run();
+		}
+		else if (helpMode) {
+			printHelp();
+		}
+		else if (versionMode) {
+			printVersion();
+		}
 	}
 
 } // End Simulation class
