@@ -474,12 +474,12 @@ public class Simulation {
 			}
 			else if (state == "Suspend_System") {
 				// Let's create a string that's padded and centered
-				String string = StringUtils.center("Suspend_S", colPadding);
+				String string = StringUtils.center("Suspend_Sys", colPadding);
 				System.out.print(string);
 			}
 			else if (state == "Suspend_User") {
 				// Let's create a string that's padded and centered
-				String string = StringUtils.center("Suspend_U", colPadding);
+				String string = StringUtils.center("Suspend_Usr", colPadding);
 				System.out.print(string);
 			}
 		}
