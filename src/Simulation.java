@@ -19,8 +19,9 @@ import org.apache.commons.lang3.StringUtils;
 // Simulation main engine class
 public class Simulation {
 	// Declare final variables (constants)
-	public static final int VERSION_MAJOR_NUMBER = 1; // The version number
-	public static final int VERSION_MINOR_NUMBER = 1; // The version number
+	public static final int VERSION_MAJOR_NUMBER = 1; // The version's major number
+	public static final int VERSION_MINOR_NUMBER = 1; // The version's minor number
+	public static final int VERSION_REVISION_NUMBER = 0; // The version's revision number
 
 	public static final int MAX_MEMORY = 2048; // Total available user memory
 	public static final int MAX_EVENTS = 500; // Maximum number of events to be fired before quitting
