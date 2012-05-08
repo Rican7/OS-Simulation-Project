@@ -9,12 +9,21 @@ import com.google.common.collect.*;
 public class MemoryManager {
 	// Declare properties
 	private ArrayList<Process> systemMemory;
+	private String memoryAlgorithm;
 
 	// Constructor
-	public MemoryManager() {
+	public MemoryManager(String memoryAlgorithm) {
+		// Let's set some properties
+		this.memoryAlgorithm = memoryAlgorithm;
+
 		// Let's initialize the Memory Manager
 		this.buildMemoryList();
+	}
 
+	// No parameter constructor
+	public MemoryManager() {
+		// Let's default to a best fit algorithm
+		this("Best");
 	}
 
 	// Private function to build the system memory array list

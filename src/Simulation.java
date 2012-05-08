@@ -26,6 +26,7 @@ public class Simulation {
 	public static final int MAX_MEMORY = 2048; // Total available user memory
 	public static final int MAX_EVENTS = 500; // Maximum number of events to be fired before quitting
 
+	private static final String[] MEMORY_ALGORITHMS = {"Best", "Worst", "First"};
 	private static final String[] STATE_NAMES = {"Hold", "Ready", "Run", "Suspend_System", "Suspend_User", "Blocked", "Done"}; // The names of each possible state
 
 	private static final int[] INITIAL_JOB_STATES = {1, 3, 5}; // The initially active job states (correspond with the state names key/index)
@@ -39,14 +40,15 @@ public class Simulation {
 	private static final int NUM_TIMES_RUN = 3; // The number of times that the system should run before quitting
 
 	// Program wide objects
+	public static boolean debugMode;
 	public static Random random;
 
 	// Class wide objects
-	public static boolean debugMode;
 	private static boolean runOnce;
 	private static boolean seeFinishConditions;
 	private static boolean helpMode;
 	private static boolean versionMode;
+	private static Long randomSeed;
 	private static EventManager states;
 	private static MemoryManager memory;
 	private static List<Event> events;
@@ -56,26 +58,43 @@ public class Simulation {
 
 	// Constructor
 	private static void run() {
+		// Let's declare the run times
+		int numberTimesToRun = NUM_TIMES_RUN;
+
+		// If runOnce is set, only run once
+		if (runOnce) {
+			numberTimesToRun = 1;
+		}
+
 		// Let's loop through until we've reached the desired number of times ran
-		for (int i = 0; i < NUM_TIMES_RUN; i++) {
-			// Let's initialize/reset some variables
-			generatedEventCount = 0;
-			firedEventCount = 0;
+		for (int i = 0; i < numberTimesToRun; i++) {
+			// Let's create a random number seed manually, so we can re-use it later
+			randomSeed = System.currentTimeMillis();
 
-			// Let's create/start our event manager
-			states = new EventManager();
+			// Ok, let's do EACH of the memory algorithms
+			for (String memoryAlgorithm : MEMORY_ALGORITHMS) {
+				// Let's initialize/reset some variables
+				generatedEventCount = 0;
+				firedEventCount = 0;
 
-			// Let's create our memory manager
-			memory = new MemoryManager();
+				// Instanciate program wide objects
+				random = new Random(randomSeed);
 
-			// Let's fill our event array list with our randomized events
-			buildEventsList();
+				// Let's create/start our event manager
+				states = new EventManager();
 
-			// Let's initialize the system with our initial conditions
-			initialConditions();
+				// Let's create our memory manager
+				memory = new MemoryManager(memoryAlgorithm);
 
-			// Ok. Everything's set up, so let's run the system
-			startSystem();
+				// Let's fill our event array list with our randomized events
+				buildEventsList();
+
+				// Let's initialize the system with our initial conditions
+				initialConditions();
+
+				// Ok. Everything's set up, so let's run the system
+				startSystem();
+			}
 		}
 	}
 
@@ -749,9 +768,6 @@ public class Simulation {
 
 	// Main function
 	public static void main(String[] args) {
-		// Instanciate program wide objects
-		random = new Random();
-
 		// Let's check for arguments
 		checkArguments(args);
 
