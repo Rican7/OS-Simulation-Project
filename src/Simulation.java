@@ -20,7 +20,7 @@ import org.apache.commons.lang3.StringUtils;
 public class Simulation {
 	// Declare final variables (constants)
 	public static final int VERSION_MAJOR_NUMBER = 1; // The version's major number
-	public static final int VERSION_MINOR_NUMBER = 1; // The version's minor number
+	public static final int VERSION_MINOR_NUMBER = 2; // The version's minor number
 	public static final int VERSION_REVISION_NUMBER = 0; // The version's revision number
 
 	public static final int MAX_MEMORY = 2048; // Total available user memory
