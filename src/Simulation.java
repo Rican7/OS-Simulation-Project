@@ -71,6 +71,14 @@ public class Simulation {
 
 	// Private function to setup the initial conditions
 	private static void initialConditions() {
+		// Only show if debugMode is on
+		if (debugMode) {
+			System.out.println("System showing inital conditions:");
+
+			outputMemoryTable();
+			outputStateTable();
+		}
+
 		// Let's create our initially active processes
 		for (int state : INITIAL_JOB_STATES) {
 			// Create the process
@@ -109,6 +117,7 @@ public class Simulation {
 
 		// Only show if debugMode is on
 		if (debugMode) {
+			outputMemoryTable();
 			outputStateTable();
 		}
 	}
@@ -427,7 +436,8 @@ public class Simulation {
 	private static boolean checkFinished() {
 		// If the total number of generated events has hit 500
 		if (generatedEventCount == MAX_EVENTS) {
-			// Let's print out the state table
+			// Let's print out the memory and state table
+			outputMemoryTable();
 			outputStateTable();
 
 			// Only show if debugMode is on
@@ -440,7 +450,8 @@ public class Simulation {
 
 		// If every job is in the "Done" state
 		if (TOTAL_NUM_JOBS == states.getProcessCount("Done")) {
-			// Let's print out the state table
+			// Let's print out the memory and state table
+			outputMemoryTable();
 			outputStateTable();
 
 			// Only show if debugMode is on
@@ -454,6 +465,63 @@ public class Simulation {
 
 		// If it got here, the system hasn't finished yet
 		return false;
+	}
+
+	// Private function to output the memory manager's memory table
+	public static void outputMemoryTable() {
+		// Let's set our column padding
+		int colPadding = 14;
+		String string;
+
+		// Let's create a couple of new lines
+		System.out.println("\r\n");
+
+		// Let's create our header
+		String[] colHeaders = {"Block", "Process", "Size"};
+
+		// Let's loop through and print our header
+		for (String header : colHeaders) {
+			// Let's create a string that's padded and centered
+			string = StringUtils.center(header, colPadding);
+			System.out.print(string);
+		}
+
+		// Let's create a couple of new lines
+		System.out.println("\r\n");
+		
+		// Now, let's loop through our memory manager
+		int i = 0;
+		List<Process> systemMemory = memory.getMemoryArrayList();
+		for (Process process : systemMemory) {
+			// Let's print out the block number
+			string = StringUtils.center("" + i, colPadding);
+			System.out.print(string);
+
+			// If the process isn't dead
+			if (process.isProcessDead() != true) {
+				// Let's print out the process id
+				string = StringUtils.center("#" + process.getId(), colPadding);
+				System.out.print(string);
+			}
+			// Otherwise, just print out that its free
+			else {
+				string = StringUtils.center("--", colPadding);
+				System.out.print(string);
+			}
+
+			// Let's print out the block's size
+			string = StringUtils.center(process.getSize() + "k", colPadding);
+			System.out.print(string);
+
+			// Let's end the line
+			System.out.println();
+
+			// Increment i
+			i++;
+		}
+
+		// Finally, to finish, let's create a couple of new lines
+		System.out.println("\r\n");
 	}
 
 	// Private function to output the event manager's state table
@@ -561,8 +629,9 @@ public class Simulation {
 			if (checkFinished()) {
 				systemRunning = false;
 			}
-			// Every 25 generated events, we should output the state table
+			// Every 25 generated events, we should output the memory and state table
 			else if ((generatedEventCount % 25) == 0) {
+				outputMemoryTable();
 				outputStateTable();
 			}
 		}
