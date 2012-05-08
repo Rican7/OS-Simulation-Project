@@ -36,11 +36,14 @@ public class Simulation {
 
 	private static final int PROCESS_RUN_TIME = 3; // The number of "CPU Time Units" that the currently running process uses on each event cycle
 
+	private static final int NUM_TIMES_RUN = 3; // The number of times that the system should run before quitting
+
 	// Program wide objects
 	public static Random random;
 
 	// Class wide objects
 	public static boolean debugMode;
+	private static boolean runOnce;
 	private static boolean seeFinishConditions;
 	private static boolean helpMode;
 	private static boolean versionMode;
@@ -53,27 +56,34 @@ public class Simulation {
 
 	// Constructor
 	private static void run() {
-		// Let's create/start our event manager
-		states = new EventManager();
+		// Let's loop through until we've reached the desired number of times ran
+		for (int i = 0; i < NUM_TIMES_RUN; i++) {
+			// Let's initialize/reset some variables
+			generatedEventCount = 0;
+			firedEventCount = 0;
 
-		// Let's create our memory manager
-		memory = new MemoryManager();
+			// Let's create/start our event manager
+			states = new EventManager();
 
-		// Let's fill our event array list with our randomized events
-		buildEventsList();
+			// Let's create our memory manager
+			memory = new MemoryManager();
 
-		// Let's initialize the system with our initial conditions
-		initialConditions();
+			// Let's fill our event array list with our randomized events
+			buildEventsList();
 
-		// Ok. Everything's set up, so let's run the system
-		startSystem();
+			// Let's initialize the system with our initial conditions
+			initialConditions();
+
+			// Ok. Everything's set up, so let's run the system
+			startSystem();
+		}
 	}
 
 	// Private function to setup the initial conditions
 	private static void initialConditions() {
 		// Only show if debugMode is on
 		if (debugMode) {
-			System.out.println("System showing inital conditions:");
+			System.out.println("System showing pre-inital conditions:");
 
 			outputMemoryTable();
 			outputStateTable();
@@ -115,11 +125,10 @@ public class Simulation {
 			}
 		}
 
-		// Only show if debugMode is on
-		if (debugMode) {
-			outputMemoryTable();
-			outputStateTable();
-		}
+		// Print initial tables
+		System.out.println("Initial Conditions:");
+		outputMemoryTable();
+		outputStateTable();
 	}
 
 	// Private function to build the event list
@@ -437,6 +446,7 @@ public class Simulation {
 		// If the total number of generated events has hit 500
 		if (generatedEventCount == MAX_EVENTS) {
 			// Let's print out the memory and state table
+			System.out.println("State and Memory at generated event #" + generatedEventCount);
 			outputMemoryTable();
 			outputStateTable();
 
@@ -451,6 +461,7 @@ public class Simulation {
 		// If every job is in the "Done" state
 		if (TOTAL_NUM_JOBS == states.getProcessCount("Done")) {
 			// Let's print out the memory and state table
+			System.out.println("State and Memory at generated event #" + generatedEventCount);
 			outputMemoryTable();
 			outputStateTable();
 
@@ -631,6 +642,7 @@ public class Simulation {
 			}
 			// Every 25 generated events, we should output the memory and state table
 			else if ((generatedEventCount % 25) == 0) {
+				System.out.println("State and Memory at generated event #" + generatedEventCount);
 				outputMemoryTable();
 				outputStateTable();
 			}
@@ -656,7 +668,13 @@ public class Simulation {
 		String description = "Enable a very verbose debug-style output";
 		System.out.format("%4s, %-14s%-40s\r\n", shortCode, longCode, description);
 
-		// Debug
+		// Run Once
+		shortCode = "-r";
+		longCode = "--runonce";
+		description = "Set the simulation to only run once for each memory allocation algorithm";
+		System.out.format("%4s, %-14s%-40s\r\n", shortCode, longCode, description);
+
+		// See Finish
 		shortCode = "-f";
 		longCode = "--seefinish";
 		description = "See the finishing condition output. Automatically enabled with debug mode enabled.";
@@ -705,6 +723,11 @@ public class Simulation {
 		// If debug has been passed, lets enable it
 		if (arguments.contains("--debug") || arguments.contains("-d")) {
 			debugMode = true;
+		}
+
+		// If runonce has been passed, lets enable it
+		if (arguments.contains("--runonce") || arguments.contains("-r")) {
+			runOnce = true;
 		}
 
 		// If seefinish has been passed, lets enable it
