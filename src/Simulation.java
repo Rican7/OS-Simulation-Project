@@ -69,6 +69,10 @@ public class Simulation {
 
 		// Let's loop through until we've reached the desired number of times ran
 		for (int i = 0; i < numberTimesToRun; i++) {
+			// Let's declare some properties
+			int bestRun = MAX_EVENTS + 1; // Set to an impossible event number
+			int worstRun = -1;
+
 			// Let's create a random number seed manually, so we can re-use it later
 			randomSeed = System.currentTimeMillis(); // Use this seed for debugging: 0x00000000fffffff1L
 
@@ -99,6 +103,20 @@ public class Simulation {
 
 				// Ok. Everything's set up, so let's run the system
 				startSystem();
+
+				if (generatedEventCount < bestRun) {
+					bestRun = generatedEventCount;
+				}
+				if (generatedEventCount > worstRun) {
+					worstRun = generatedEventCount;
+				}
+			}
+
+			if (bestRun != worstRun) {
+				System.out.println("DIFFERENT!!!");
+			}
+			else {
+				i--;
 			}
 		}
 	}
