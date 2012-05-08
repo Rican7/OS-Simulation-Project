@@ -1,7 +1,6 @@
 // Imports (libraries and utilities)
 import java.util.Map;
 import java.util.List;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Set;
 
@@ -89,23 +88,6 @@ public class EventManager {
 			// Let's add the process to the state map
 			if (this.systemStates.put(initialState, process)) {
 				// If we got here, the process has successfully been added to the state manager
-				return true;
-			}
-		}
-
-		return false;
-	}
-
-	// Private function to remove a process from the event manager
-	private boolean removeProcess(Process process) {
-		// Let's first check if the given process is even in the event manager
-		if (this.systemStates.containsValue(process)) {
-			// Ok, well, let's get rid of it, then
-			// First, let's get a collection of all of the values
-			Collection<Process> processes = this.systemStates.values();
-
-			// Now, let's remove the given process from that collection
-			if (processes.remove(process)) {
 				return true;
 			}
 		}

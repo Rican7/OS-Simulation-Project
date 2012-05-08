@@ -1,6 +1,5 @@
 // Imports (libraries and utilities)
 import java.util.ArrayList;
-import java.util.Collections;
 
 // External imports
 import com.google.common.collect.*;
@@ -36,19 +35,6 @@ public class MemoryManager {
 
 		// Ok, let's add the dead process to memory as our initially completely empty single block
 		this.systemMemory.add(deadProcess);
-	}
-
-	// Private function to get the amount of memory currently in use
-	private int getMemoryUsed() {
-		// Let's keep track of the used memory
-		int usedMemory = 0;
-
-		// Let's loop through each process in memory
-		for (Process proc : this.systemMemory) {
-			usedMemory += proc.getSize();
-		}
-
-		return usedMemory;
 	}
 
 	// Private function to get the address of a dead/empty process block that the given process may fit into 
