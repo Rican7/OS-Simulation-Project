@@ -534,14 +534,14 @@ public class Simulation {
 
 			// Let's increment the total number of events that have been generated
 			generatedEventCount++;
-
-			// Let's actually fire the event that's been generated
-			boolean eventSucceeded = fireEvent(generatedEvent);
 			
 			// Only show if debugMode is on
 			if (debugMode) {
 				System.out.println("GENERATED Event " + generatedEvent.toString() + " firing");
 			}
+
+			// Let's actually fire the event that's been generated
+			boolean eventSucceeded = fireEvent(generatedEvent);
 
 			// If the event succeeded
 			if (eventSucceeded) {
