@@ -209,7 +209,7 @@ public class MemoryManager {
 				int addressDifference = (deadAddress - comparedAddress);
 
 				// If the comparedProcess is still null 
-				if (comparedProcess == null) {
+				if (comparedProcess == null || addressDifference > 1) {
 					// Let's make the newly found dead process the comparedProcess
 					comparedProcess = processBlock;
 

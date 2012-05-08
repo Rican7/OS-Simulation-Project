@@ -70,7 +70,7 @@ public class Simulation {
 		// Let's loop through until we've reached the desired number of times ran
 		for (int i = 0; i < numberTimesToRun; i++) {
 			// Let's create a random number seed manually, so we can re-use it later
-			randomSeed = System.currentTimeMillis();
+			randomSeed = System.currentTimeMillis(); // Use this seed for debugging: 0x00000000fffffff1L
 
 			// Ok, let's do EACH of the memory algorithms
 			for (String memoryAlgorithm : MEMORY_ALGORITHMS) {
