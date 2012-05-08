@@ -8,9 +8,6 @@ public class Process implements Comparable<Process> {
 	private static final int MAX_REQ_TIME = 15; // Highest possible cpu time
 	private static final int TIME_STEPPING = 3; // CPU time stepping
 
-	// Declare static (global) variables
-	public static int numOfProcesses = 0; // Use this so we can always have a UNIQUE identifier
-
 	// Declare properties
 	private int identifier;
 	private int size;
@@ -27,7 +24,7 @@ public class Process implements Comparable<Process> {
 		this.cpuReqTime = setTime;
 
 		// Increment the numOfProcesses
-		numOfProcesses++;
+		Simulation.numOfProcesses++;
 	}
 
 	// Empty parameter constructor
@@ -50,7 +47,7 @@ public class Process implements Comparable<Process> {
 	// Private function to generate a unique process identifier
 	private int generateId() {
 		// Return an id that is equal to the number of processes created
-		return numOfProcesses;
+		return Simulation.numOfProcesses;
 	}
 
 	// Private function to generate a process size with these limitations:

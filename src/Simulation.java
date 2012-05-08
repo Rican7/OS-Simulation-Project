@@ -42,6 +42,7 @@ public class Simulation {
 	// Program wide objects
 	public static boolean debugMode;
 	public static Random random;
+	public static int numOfProcesses; // Use this so we can always have a UNIQUE identifier
 
 	// Class wide objects
 	private static boolean runOnce;
@@ -77,6 +78,7 @@ public class Simulation {
 				System.out.println("Running system using memory algorithm \"" + memoryAlgorithm + "\"");
 
 				// Let's initialize/reset some variables
+				numOfProcesses = 0;
 				generatedEventCount = 0;
 				firedEventCount = 0;
 
