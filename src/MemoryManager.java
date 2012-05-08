@@ -142,7 +142,9 @@ public class MemoryManager {
 
 	// Private function to clean our memory's blocks by checking for adjacent free memory blocks and removing them
 	private void cleanUpMemory() {
-		// Let's keep track of the process being compared to
+		// Let's set some properties
+		boolean letsMerge = false;
+		Process foundProcess = null; // Start as null... we haven't found anything yet
 		Process comparedProcess = null; // Start as null... we don't have a process to compare to yet
 		int comparedAddress = -1; // Start with an impossible address
 
@@ -171,12 +173,22 @@ public class MemoryManager {
 				// Let's check by seeing if the addresses are only 1 address different
 				else if (addressDifference == 1) {
 					// If we got here, there must be two adjacent dead blocks. So... let's "merge" them
-					this.mergeEmptyBlocks(comparedProcess, processBlock);
+					foundProcess = processBlock;
+					letsMerge = true;
 
-					// There may be more adjacent blocks.. let's call it again
-					this.cleanUpMemory();
+					// Let's not break the loop by modifying while inside it
+					break;
 				}
 			}
+		}
+
+		// If the letsMerge flag has been set
+		if (letsMerge && foundProcess != null) {
+			// If we got here, there must be two adjacent dead blocks. So... let's "merge" them
+			this.mergeEmptyBlocks(comparedProcess, foundProcess);
+
+			// There may be more adjacent blocks.. let's call it again
+			this.cleanUpMemory();
 		}
 	}
 
@@ -191,7 +203,7 @@ public class MemoryManager {
 
 		try {
 			// Let's replace the given process's block with an empty/dead process block of the same size
-			this.systemMemory.add(index, deadProcess);
+			this.systemMemory.set(index, deadProcess);
 
 			// Now, let's clean up the adjacent memory blocks
 			this.cleanUpMemory();
@@ -212,6 +224,11 @@ public class MemoryManager {
 		}
 
 		return false;
+	}
+
+	// Public function to get an array list representation of the memory manager list
+	public ArrayList<Process> getMemoryArrayList() {
+		return this.systemMemory;
 	}
 
 }
