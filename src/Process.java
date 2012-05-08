@@ -9,7 +9,7 @@ public class Process implements Comparable<Process> {
 	private static final int TIME_STEPPING = 3; // CPU time stepping
 
 	// Declare static (global) variables
-	public static int numOfProcesses = 0;
+	public static int numOfProcesses = 0; // Use this so we can always have a UNIQUE identifier
 
 	// Declare properties
 	private int identifier;
@@ -34,6 +34,17 @@ public class Process implements Comparable<Process> {
 	public Process() {
 		// Let's generate some parameters and call the normal function
 		this(generateSize(), generateTime());
+	}
+
+	/*
+	 * A constructor that allows for a boolean value to be passed (its value means nothing, as long as its present)
+	 * This constuctor will build a new "dead" Process
+	 * A "dead" process has a required cpu time of -1 and is only meant as an empty memory block placeholder
+	 */
+	public Process(int setSize, boolean deadFlag) {
+		// We don't need any fancy construction for a dead process, so let's set the instances properties
+		this.size = setSize;
+		this.cpuReqTime = -1;
 	}
 
 	// Private function to generate a unique process identifier
@@ -101,6 +112,20 @@ public class Process implements Comparable<Process> {
 		this.cpuUsedTime += time;
 	}
 
+	/*
+	 * Public function to resize a process
+	 * This is designed ONLY for "dead" processes and will thrown an exception if attempted on a normal process
+	 */
+	public void resize(int newSize) throws Exception {
+		// Only do this if the process IS a dead process
+		if (this.isProcessDead()) {
+			this.size = newSize;
+		}
+		else {
+			throw new Exception("Illegal access to non-\"dead\" process: " + this);
+		}
+	}
+
 	// Public function to check if the process is "DONE" ()
 	public boolean isDone() {
 		// If its used time has reached its required time
@@ -110,6 +135,18 @@ public class Process implements Comparable<Process> {
 		}
 
 		// If it got here, it must not be done
+		return false;
+	}
+
+	// Public function to check if a process is a "dead" process
+	public boolean isProcessDead() {
+		// If the required CPU time is -1
+		if (this.getReqTime() == -1) {
+			// Ok, its a dead process
+			return true;
+		}
+
+		// If it got here, it must not be a dead proces
 		return false;
 	}
 
