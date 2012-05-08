@@ -53,14 +53,52 @@ public class MemoryManager {
 
 	// Private function to get the address of a dead/empty process block that the given process may fit into 
 	private int getFittingBlockAddress(Process process) {
+		// Let's declare some properties
+		int firstBlock = -1;
+		int smallestBlock = -1;
+		int largestBlock = -1;
+		int smallestBlockSize = Simulation.MAX_MEMORY + 1; // Set the max to an impossible block size
+		int largestBlockSize = -1;
+
 		// Let's loop through our entire memory set
 		for (Process processBlock : this.systemMemory) {
 			// If we find an empty process block (a block with a "dead" process)
 			// AND the block is large enough for the size of the passed process
 			if (processBlock.isProcessDead() == true && processBlock.getSize() >= process.getSize()) {
-				// Let's return the index of the empty/dead process block that allows the given process to fit into
-				return this.systemMemory.indexOf(processBlock);
+				// Let's get the process block's index
+				int blockIndex = this.systemMemory.indexOf(processBlock);
+
+				// Let's get the process's size too
+				int blockSize = processBlock.getSize();
+
+				// If the first block hasn't been set yet, let's set it
+				if (firstBlock == -1) {
+					firstBlock = blockIndex;
+				}
+
+				// If this newly found block is smaller than the smallest we've found so far
+				if (blockSize < smallestBlockSize) {
+					smallestBlock = blockIndex;
+					smallestBlockSize = blockSize;
+				}
+
+				// If this newly found block is larger than the largest we've found so far
+				if (blockSize > largestBlockSize) {
+					largestBlock = blockIndex;
+					largestBlockSize = blockSize;
+				}
 			}
+		}
+
+		// Depending on the algorithm we're currently using, let's return the index
+		if (memoryAlgorithm == "Best") {
+			return smallestBlock;
+		}
+		else if (memoryAlgorithm == "Worst") {
+			return largestBlock;
+		}
+		else if (memoryAlgorithm == "First") {
+			return firstBlock;
 		}
 
 		// Ok, for a "hey we didn't find one" scenario, let's return a -1

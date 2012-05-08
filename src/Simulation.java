@@ -73,6 +73,9 @@ public class Simulation {
 
 			// Ok, let's do EACH of the memory algorithms
 			for (String memoryAlgorithm : MEMORY_ALGORITHMS) {
+				// Let's say what algorithm we're using
+				System.out.println("Running system using memory algorithm \"" + memoryAlgorithm + "\"");
+
 				// Let's initialize/reset some variables
 				generatedEventCount = 0;
 				firedEventCount = 0;
