@@ -378,7 +378,7 @@ public class Simulation {
 					// If the process is successfully removed from memory AND the process successfully changed state 
 					if (memory.removeProcess(process) && states.changeProcessState(event)) {
 						// Ok, it succeeded, but now there's nothing "running" (in the run event), so let's fix that
-						fireEvent(new Event("Ready", event.from));
+						fireEvent(new Event("Ready", "Run"));
 
 						// If we made it here, the event has succeeded
 						return true;
@@ -392,7 +392,7 @@ public class Simulation {
 					// If the process is successfully removed from memory AND the process successfully changed state 
 					if (memory.removeProcess(process) && states.changeProcessState(event)) {
 						// Ok, it succeeded, but now there's nothing "running" (in the run event), so let's fix that
-						fireEvent(new Event("Ready", event.from));
+						fireEvent(new Event("Ready", "Run"));
 
 						// If we made it here, the event has succeeded
 						return true;
